@@ -101,20 +101,65 @@
   .switch[aria-checked="true"] { background: linear-gradient(135deg, var(--mint-2), var(--lilac)); }
   .switch[aria-checked="true"]::after { transform: translateX(20px); }
 
-  /* 滑杆、取色、下拉：都换成珍珠色，和上面的选项一套 */
-  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 24px; margin: 0; background: transparent; cursor: pointer; }
-  input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 4px; background: linear-gradient(90deg, rgba(143, 211, 194, .55), rgba(183, 166, 230, .55)); }
-  input[type=range]::-moz-range-track { height: 4px; border-radius: 4px; background: linear-gradient(90deg, rgba(143, 211, 194, .55), rgba(183, 166, 230, .55)); }
-  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 40%, #f1ecff 100%); box-shadow: 0 0 0 1px rgba(111, 95, 180, .35), 0 3px 8px -2px rgba(111, 95, 180, .45); }
-  input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 40%, #f1ecff 100%); box-shadow: 0 0 0 1px rgba(111, 95, 180, .35), 0 3px 8px -2px rgba(111, 95, 180, .45); }
-  input[type=color] { -webkit-appearance: none; appearance: none; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; box-shadow: 0 0 0 2px #fff, 0 0 0 2.5px rgba(111, 95, 180, .3), 0 4px 10px -4px rgba(60, 60, 110, .35); }
-  input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
-  input[type=color]::-webkit-color-swatch { border: 0; border-radius: 50%; }
-  input[type=color]::-moz-color-swatch { border: 0; border-radius: 50%; }
-  select { -webkit-appearance: none; appearance: none; width: 100%; padding: 9px 34px 9px 14px; border-radius: 999px; border: 0; color: var(--ink); font: 500 16px var(--serif); cursor: pointer;
-    background: rgba(255, 255, 255, .7) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236f5fb4' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center; box-shadow: inset 0 0 0 .5px rgba(111, 95, 180, .22); }
-  html[lang="zh-CN"] select { font: 400 14px var(--zh); }
+  /* 滑杆：细的凹槽，走过的那段是薄荷到淡紫；滑块是一颗玻璃珠，按住会像凝胶一样鼓一下 */
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; margin: 0; background: transparent; cursor: pointer; --p: 50%; }
+  input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 6px; background: linear-gradient(90deg, #a9e6d8, #c5b6f0) 0 0 / var(--p) 100% no-repeat, rgba(111, 95, 180, .12); box-shadow: inset 0 1px 2px rgba(60, 60, 110, .16), 0 1px 0 rgba(255, 255, 255, .8); }
+  input[type=range]::-moz-range-track { height: 6px; border-radius: 6px; background: rgba(111, 95, 180, .12); box-shadow: inset 0 1px 2px rgba(60, 60, 110, .16); }
+  input[type=range]::-moz-range-progress { height: 6px; border-radius: 6px; background: linear-gradient(90deg, #a9e6d8, #c5b6f0); }
+  input[type=range].tr::-webkit-slider-runnable-track { background: var(--track); }
+  input[type=range].tr::-moz-range-track { background: var(--track); }
+  input[type=range].tr::-moz-range-progress { background: transparent; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1);
+    background: radial-gradient(circle at 32% 26%, rgba(255, 255, 255, .98) 0 16%, rgba(255, 255, 255, .55) 38%, rgba(255, 255, 255, .22) 64%, rgba(255, 255, 255, .5) 100%);
+    box-shadow: inset 0 0 0 .5px rgba(255, 255, 255, .95), inset 0 -3px 5px rgba(111, 95, 180, .22), inset 0 2px 3px rgba(255, 255, 255, .9), 0 0 0 .5px rgba(111, 95, 180, .32), 0 5px 12px -4px rgba(60, 60, 110, .45); }
+  input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border: 0; border-radius: 50%; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1);
+    background: radial-gradient(circle at 32% 26%, rgba(255, 255, 255, .98) 0 16%, rgba(255, 255, 255, .55) 38%, rgba(255, 255, 255, .22) 64%, rgba(255, 255, 255, .5) 100%);
+    box-shadow: inset 0 0 0 .5px rgba(255, 255, 255, .95), inset 0 -3px 5px rgba(111, 95, 180, .22), inset 0 2px 3px rgba(255, 255, 255, .9), 0 0 0 .5px rgba(111, 95, 180, .32), 0 5px 12px -4px rgba(60, 60, 110, .45); }
+  input[type=range]:active::-webkit-slider-thumb { transform: scale(1.22); }
+  input[type=range]:active::-moz-range-thumb { transform: scale(1.22); }
 
+  /* 下拉和取色的按钮：一颗珍珠胶囊 */
+  .pick { position: relative; }
+  .pick-btn { display: inline-flex; align-items: center; gap: 10px; width: 100%; min-height: 40px; padding: 7px 14px 7px 12px; border: 0; border-radius: 999px; text-align: left; color: var(--ink); font: 500 16.5px/1.2 var(--serif);
+    background: linear-gradient(160deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, .62)); box-shadow: inset 0 1px 0 #fff, inset 0 0 0 .5px rgba(111, 95, 180, .22), 0 6px 14px -10px rgba(60, 60, 110, .5); transition: transform .25s cubic-bezier(.3, 1.6, .5, 1); }
+  html[lang="zh-CN"] .pick-btn { font: 400 14.5px/1.2 var(--zh); }
+  .pick-btn:active { transform: scale(.985); }
+  .pick-btn .val { flex: 1; display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+  .pick-btn .chev { width: 10px; height: 6px; flex: none; transition: transform .3s; }
+  .pick-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+  .ico { width: 20px; height: 20px; flex: none; fill: rgba(193, 245, 236, .45); stroke: var(--lilac-deep); stroke-width: 1; stroke-linejoin: round; }
+  .cdot { width: 24px; height: 24px; border-radius: 50%; flex: none; box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, .12), inset 0 3px 5px rgba(255, 255, 255, .6), inset 0 -2px 4px rgba(0, 0, 0, .1); }
+  .hex { font: italic 400 15px/1 var(--serif); color: var(--ink-3); letter-spacing: .02em; }
+
+  /* 浮起来的那一层：液态玻璃。中间几乎是透明的，边上把底下的东西弯进去（Chromium 里用位移贴图真的弯），亮边跟着形状走 */
+  .pop { position: absolute; z-index: 30; top: calc(100% + 8px); left: 0; min-width: 100%; padding: 6px; border-radius: 24px; isolation: isolate; transform-origin: 30% 0;
+    background: linear-gradient(165deg, rgba(255, 255, 255, .74), rgba(255, 255, 255, .56) 55%, rgba(236, 250, 246, .64));
+    backdrop-filter: blur(22px) saturate(185%) brightness(1.04); -webkit-backdrop-filter: blur(22px) saturate(185%) brightness(1.04);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 -1px 1px rgba(255, 255, 255, .45), 0 0 0 .5px rgba(111, 95, 180, .16), 0 24px 48px -20px rgba(60, 60, 110, .45), 0 6px 14px -8px rgba(60, 60, 110, .2); }
+  .pop[hidden] { display: none; }
+  .pop.in { animation: glass-in .42s cubic-bezier(.2, 1.3, .4, 1); }
+  @keyframes glass-in { from { transform: scale(.9, .82); opacity: .2; } 55% { opacity: 1; } }
+  .pop::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; padding: 1.2px; pointer-events: none;
+    background: linear-gradient(140deg, #fff 0%, rgba(255, 255, 255, .25) 28%, rgba(255, 255, 255, 0) 52%, rgba(193, 245, 236, .55) 80%, rgba(214, 204, 255, .9) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+  .pop::after { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; background: radial-gradient(120% 55% at 28% 0%, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 62%); }
+  .pop .glow { position: absolute; z-index: -1; width: 160px; height: 160px; margin: -80px 0 0 -80px; border-radius: 50%; pointer-events: none; background: radial-gradient(circle, rgba(255, 255, 255, .7), rgba(255, 255, 255, 0) 65%); opacity: 0; transition: opacity .35s; }
+  .pop:hover .glow { opacity: .9; }
+  .opt { display: flex; align-items: center; gap: 11px; width: 100%; padding: 9px 14px 9px 10px; border: 0; border-radius: 18px; background: none; text-align: left; color: var(--ink-2); font: 500 16.5px/1.2 var(--serif); transition: background .2s, color .2s, transform .25s cubic-bezier(.3, 1.6, .5, 1); }
+  html[lang="zh-CN"] .opt { font: 400 14.5px/1.3 var(--zh); }
+  .opt:hover, .opt:focus-visible { color: var(--ink); background: rgba(255, 255, 255, .5); outline: none; }
+  .opt:active { transform: scale(.98); }
+  .opt[aria-selected="true"] { color: var(--ink); background: linear-gradient(150deg, rgba(255, 255, 255, .95), rgba(228, 248, 243, .85) 55%, rgba(233, 226, 255, .9)); box-shadow: inset 0 1px 0 #fff, inset 0 0 0 .5px rgba(111, 95, 180, .25); }
+  .opt[aria-selected="true"]::after { content: ''; margin-left: auto; width: 9px; height: 5px; border: solid var(--lilac-deep); border-width: 0 0 1.5px 1.5px; transform: rotate(-45deg) translateY(-2px); }
+  .cpop { width: 272px; padding: 14px 14px 12px; background: linear-gradient(165deg, rgba(255, 255, 255, .88), rgba(255, 255, 255, .76) 55%, rgba(240, 251, 247, .8)); }   /* 里面是滑杆和小字，底下透得太多会看不清：这一块磨得更厚 */
+  .pal { display: grid; grid-template-columns: repeat(8, 1fr); gap: 7px; }
+  .pal button { aspect-ratio: 1; border: 0; border-radius: 50%; padding: 0; background: var(--c); transition: transform .25s cubic-bezier(.3, 1.6, .5, 1); box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, .12), inset 0 3px 4px rgba(255, 255, 255, .55), inset 0 -2px 3px rgba(0, 0, 0, .08); }
+  .pal button:hover { transform: scale(1.12); }
+  .pal button[aria-pressed="true"] { box-shadow: 0 0 0 2px rgba(255, 255, 255, .95), 0 0 0 3px var(--lilac), inset 0 3px 4px rgba(255, 255, 255, .55); }
+  .hsl { display: grid; gap: 2px; margin-top: 12px; }
+  .hsl label { display: grid; grid-template-columns: 40px 1fr; align-items: center; gap: 8px; font: italic 400 14px/1 var(--serif); color: var(--ink-3); }
+  html[lang="zh-CN"] .hsl label { font: 400 12px/1 var(--zh); }
+  .cpop .hexline { display: flex; align-items: center; gap: 10px; margin-top: 8px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, .6); }
   .btns { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; margin-top: 18px; }
   .btn { border: 0; padding: 12px 20px; border-radius: 999px; font: 600 17px/1 var(--serif); color: var(--ink); background: linear-gradient(135deg, #e8fbf5, #efe9ff); box-shadow: inset 0 0 0 .5px rgba(255, 255, 255, .9), inset 0 1px 0 #fff, 0 10px 22px -10px rgba(111, 95, 180, .55); transition: transform .2s, box-shadow .2s; }
   html[lang="zh-CN"] .btn { font: 600 14.5px/1 var(--zh); }
@@ -136,7 +181,8 @@
   html [data-l] { display: none !important; } html[lang="en"] [data-l="en"], html[lang="zh-CN"] [data-l="zh"] { display: inline !important; }
   #custom[hidden], .row[hidden], .card[hidden] { display: none; }
   @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; padding: 16px 16px 40px; gap: 18px; } h1 { font-size: 40px; } .stagebox { position: relative; top: 0; } .panel { padding: 4px 18px 18px; border-radius: 24px; } .row { grid-template-columns: 78px 1fr; } }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  @media (max-width: 860px) { .cpop { left: auto; right: 0; width: min(272px, calc(100vw - 40px)); } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .pop.in { animation: none; } }
 </style>
 </head>
 <body>
@@ -168,11 +214,11 @@
 
     <section class="card" id="custom" hidden>
       <h2><span data-l="en">Your crystal</span><span data-l="zh">你的晶体</span></h2>
-      <div class="row"><label><span data-l="en">Shape</span><span data-l="zh">形状</span></label><select id="cShape"></select></div>
+      <div class="row"><label><span data-l="en">Shape</span><span data-l="zh">形状</span></label><div class="pick"><button type="button" class="pick-btn" id="shapeBtn" aria-haspopup="listbox" aria-expanded="false"><span class="val"></span><svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="#6f5fb4" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="pop" id="shapePop" role="listbox" hidden></div></div></div>
       <div class="row"><label><span data-l="en">Sides</span><span data-l="zh">几个面</span></label><input type="range" id="cN" min="3" max="9" step="1" value="6"></div>
       <div class="row"><label><span data-l="en">Crystals</span><span data-l="zh">几颗</span></label><input type="range" id="cCount" min="1" max="5" step="1" value="3"></div>
-      <div class="row"><label><span data-l="en">Colour</span><span data-l="zh">颜色</span></label><input type="color" id="cCol" value="#7b6cff"></div>
-      <div class="row"><label><span data-l="en">Rim colour</span><span data-l="zh">边上的颜色</span></label><input type="color" id="cCol2" value="#5fe6ff"></div>
+      <div class="row"><label><span data-l="en">Colour</span><span data-l="zh">颜色</span></label><div class="pick" id="cColPick"><button type="button" class="pick-btn" aria-haspopup="dialog" aria-expanded="false"><span class="val"><i class="cdot"></i><span class="hex"></span></span><svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="#6f5fb4" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="pop cpop" role="dialog" hidden></div></div></div>
+      <div class="row"><label><span data-l="en">Rim colour</span><span data-l="zh">边上的颜色</span></label><div class="pick" id="cCol2Pick"><button type="button" class="pick-btn" aria-haspopup="dialog" aria-expanded="false"><span class="val"><i class="cdot"></i><span class="hex"></span></span><svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="#6f5fb4" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="pop cpop" role="dialog" hidden></div></div></div>
       <div class="row"><label><span data-l="en">Inner glow</span><span data-l="zh">内光</span></label><input type="range" id="cGlow" min="0" max="1" step=".05" value=".4"></div>
       <div class="row"><label><span data-l="en">Iridescence</span><span data-l="zh">晕彩</span></label><input type="range" id="cIri" min="0" max="1" step=".05" value=".5"></div>
       <div class="row"><label><span data-l="en">Fire</span><span data-l="zh">火彩</span></label><input type="range" id="cFire" min="0" max="4" step=".1" value="1.8"></div>
@@ -261,7 +307,7 @@
     seg('frames', [[24, '24', '24'], [36, '36', '36'], [72, '72', '72']], exp.frames, f => { exp.frames = f; paint(); });
     seg('fsize', [[128, '128', '128'], [256, '256', '256'], [512, '512', '512']], exp.size, s => { exp.size = s; paint(); });
     seg('fbg', [['none', 'Transparent', '透明'], ['paper', 'Paper', '纸']], exp.bg, b => { exp.bg = b; paint(); });
-    $('#cShape').innerHTML = [['prism', 'Prism with tips', '带尖的柱'], ['bipyramid', 'Bipyramid', '双锥'], ['octahedron', 'Octahedron', '八面体'], ['cube', 'Cube', '立方体'], ['cuboctahedron', 'Cuboctahedron', '立方八面体'], ['dodecahedron', 'Dodecahedron', '十二面体'], ['quartz', 'Quartz habit', '石英的样子'], ['tourmaline', 'Tourmaline habit', '碧玺的样子'], ['blade', 'Blade', '刀片']].map(([v, en, zh]) => `<option value="${v}"${v === cust.shape ? ' selected' : ''}>${ZH() ? zh : en}</option>`).join('');
+    paintShape(); colourPickers.forEach(f => f());
   }
   function update(ore) {
     if (!ua.supports) return;
@@ -279,9 +325,8 @@
   $('#proj').onclick = () => { st.projection = !st.projection; update(); };
   $('#mine').onclick = () => { st.custom = true; update(true); count('pick', { m: 'custom' }); };
   const bind = (id, key, num = true) => $('#' + id).addEventListener('input', e => { cust[key] = num ? +e.target.value : e.target.value; if (st.custom) ua.set(opts()); syncURL(); });
-  bind('cN', 'n'); bind('cCount', 'count'); bind('cCol', 'colour', false); bind('cCol2', 'colour2', false); bind('cGlow', 'glow'); bind('cIri', 'iri'); bind('cFire', 'fire');
-  $('#cShape').addEventListener('change', e => { cust.shape = e.target.value; if (st.custom) ua.set(opts()); syncURL(); });
-  for (const [id, k] of [['cN', 'n'], ['cCount', 'count'], ['cCol', 'colour'], ['cCol2', 'colour2'], ['cGlow', 'glow'], ['cIri', 'iri'], ['cFire', 'fire']]) $('#' + id).value = cust[k];
+  bind('cN', 'n'); bind('cCount', 'count'); bind('cGlow', 'glow'); bind('cIri', 'iri'); bind('cFire', 'fire');
+  for (const [id, k] of [['cN', 'n'], ['cCount', 'count'], ['cGlow', 'glow'], ['cIri', 'iri'], ['cFire', 'fire']]) $('#' + id).value = cust[k];
   const save = (blob, name) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); };
   $('#goSnap').onclick = () => { ua.snapshot({ canvas: true }).toBlob(b => save(b, `uniaether-${st.custom ? 'crystal' : st.mineral}.png`)); count('export', { kind: 'snapshot', m: st.custom ? 'custom' : st.mineral }); };
   $('#goSheet').onclick = async () => {
@@ -291,6 +336,96 @@
       count('export', { kind: 'sheet', m: st.custom ? 'custom' : st.mineral, frames: exp.frames, size: exp.size, bg: exp.bg }); }
     catch (e) { alert(e.message); } finally { btn.disabled = false; } };
   $('#goLink').onclick = async () => { try { await navigator.clipboard.writeText(location.href); $('#goLink').classList.add('done'); } catch (_) {} };
+
+  // —— 浮起来的玻璃层：下拉（形状）和取色 ——
+  const SHAPES = [['prism', 'Prism with tips', '带尖的柱'], ['bipyramid', 'Bipyramid', '双锥'], ['octahedron', 'Octahedron', '八面体'], ['cube', 'Cube', '立方体'], ['cuboctahedron', 'Cuboctahedron', '立方八面体'], ['dodecahedron', 'Dodecahedron', '十二面体'], ['quartz', 'Quartz habit', '石英的样子'], ['tourmaline', 'Tourmaline habit', '碧玺的样子'], ['blade', 'Blade', '刀片']];
+  const ICON = {
+    prism: '<path d="M10 1.5 13.5 5v9.5L10 18.5 6.5 14.5V5Z"/><path d="M6.5 5 10 7l3.5-2M10 7v11.5" fill="none"/>',
+    bipyramid: '<path d="M10 1.5 16 10 10 18.5 4 10Z"/><path d="M4 10l4 1.6h4l4-1.6M10 1.5l-2 10.1M10 1.5l2 10.1M8 11.6l2 6.9 2-6.9" fill="none"/>',
+    octahedron: '<path d="M10 1.5 17 10 10 18.5 3 10Z"/><path d="M3 10l5.5 2L17 10M10 1.5 8.5 12 10 18.5" fill="none"/>',
+    cube: '<path d="M10 2 17 5.5v9L10 18 3 14.5v-9Z"/><path d="M3 5.5 10 9l7-3.5M10 9v9" fill="none"/>',
+    cuboctahedron: '<path d="M6 2.5h8L18 8l-2 7-6 3.5L4 15 2 8Z"/><path d="M2 8h16M6 2.5 10 8l4-5.5M4 15l6-7 6 7" fill="none"/>',
+    dodecahedron: '<path d="M10 1.5 17 6v8l-7 4.5L3 14V6Z"/><path d="M3 6l7 3.5L17 6M10 9.5v9M3 14l7-4.5 7 4.5" fill="none"/>',
+    quartz: '<path d="M10 1.5 13 4.5v11L10 18.5 7 15.5v-11Z"/><path d="M7 4.5 10 6l3-1.5M10 6v12.5" fill="none"/>',
+    tourmaline: '<path d="M10 2 14.5 5.5 12.5 17 7.5 17 5.5 5.5Z"/><path d="M5.5 5.5 10 8l4.5-2.5M10 8v9" fill="none"/>',
+    blade: '<path d="M5 3h4l6 14h-4Z"/><path d="M9 3l-1 2 6 12" fill="none"/>',
+  };
+  const svgI = k => `<svg class="ico" viewBox="0 0 20 20" aria-hidden="true">${ICON[k] || ICON.prism}</svg>`;
+  const CHROMIUM = !!(navigator.userAgentData && navigator.userAgentData.brands.some(b => /Chromium/.test(b.brand)));
+  let open = null;
+  function lens(pop) {   // 位移贴图：边上一圈把底下的内容往里弯，中间不动；按它的大小现做一张
+    if (!CHROMIUM || matchMedia('(prefers-reduced-transparency: reduce)').matches) return null;
+    const w = Math.round(pop.offsetWidth), h = Math.round(pop.offsetHeight); if (!w || !h) return null;
+    const r = Math.min(parseFloat(getComputedStyle(pop).borderTopLeftRadius) || 22, w / 2, h / 2), band = 18;
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const cx = cv.getContext('2d'), im = cx.createImageData(w, h), d = im.data;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const px = x + .5 - w / 2, py = y + .5 - h / 2, qx = Math.abs(px) - (w / 2 - r), qy = Math.abs(py) - (h / 2 - r);
+      const ox = Math.max(qx, 0), oy = Math.max(qy, 0), sd = Math.hypot(ox, oy) + Math.min(Math.max(qx, qy), 0) - r;
+      let nx, ny; if (qx > 0 && qy > 0) { const l = Math.hypot(qx, qy) || 1; nx = qx / l; ny = qy / l; } else if (qx > qy) { nx = 1; ny = 0; } else { nx = 0; ny = 1; }
+      nx *= Math.sign(px) || 1; ny *= Math.sign(py) || 1;
+      const t = Math.max(0, Math.min(1, 1 + sd / band)), m = t * t * t, k = (y * w + x) * 4;
+      d[k] = 128 - nx * m * 127; d[k + 1] = 128 - ny * m * 127; d[k + 2] = 128; d[k + 3] = 255;
+    }
+    cx.putImageData(im, 0, 0);
+    const id = 'lens-' + (pop.id || pop.parentNode.id || Math.random().toString(36).slice(2));
+    let svg = document.getElementById('ua-lenses'); if (!svg) { svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.id = 'ua-lenses'; svg.setAttribute('width', '0'); svg.setAttribute('height', '0'); svg.style.position = 'absolute'; document.body.append(svg); }
+    let f = document.getElementById(id); if (f) f.remove();
+    svg.insertAdjacentHTML('beforeend', `<filter id="${id}" x="0" y="0" width="${w}" height="${h}" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feImage href="${cv.toDataURL()}" x="0" y="0" width="${w}" height="${h}" preserveAspectRatio="none" result="map"/><feDisplacementMap in="SourceGraphic" in2="map" scale="0" xChannelSelector="R" yChannelSelector="G"/></filter>`);
+    pop.style.backdropFilter = pop.style.webkitBackdropFilter = `url(#${id}) blur(14px) saturate(185%) brightness(1.05)`;
+    return document.querySelector(`#${id} feDisplacementMap`);
+  }
+  function closePop() { if (!open) return; open.pop.hidden = true; open.pop.classList.remove('in'); open.btn.setAttribute('aria-expanded', 'false'); open = null; }
+  function openPop(btn, pop) {
+    closePop(); pop.hidden = false; pop.classList.remove('in'); void pop.offsetWidth; pop.classList.add('in'); btn.setAttribute('aria-expanded', 'true'); open = { btn, pop };
+    if (!pop.querySelector('.glow')) pop.prepend(Object.assign(document.createElement('span'), { className: 'glow' }));
+    const dm = lens(pop);
+    if (dm && matchMedia('(prefers-reduced-motion: reduce)').matches) dm.setAttribute('scale', '46');
+    else if (dm) { const t0 = performance.now(), go = now => { const k = Math.min(1, (now - t0) / 420); dm.setAttribute('scale', String(46 * (1 - Math.pow(1 - k, 3)))); if (k < 1 && open && open.pop === pop) requestAnimationFrame(go); }; requestAnimationFrame(go); }   // 出现的时候是「弯折一点点加上去」，不是淡入
+    const f = pop.querySelector('[aria-selected="true"]') || pop.querySelector('button, input'); if (f) f.focus({ preventScroll: true });
+  }
+  const toggle = (btn, pop) => (open && open.pop === pop) ? closePop() : openPop(btn, pop);
+  document.addEventListener('pointerdown', e => { if (open && !open.pop.contains(e.target) && !open.btn.contains(e.target)) closePop(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && open) { const b = open.btn; closePop(); b.focus(); } });
+  document.addEventListener('pointermove', e => { if (!open) return; const g = open.pop.querySelector('.glow'), r = open.pop.getBoundingClientRect(); if (g) { g.style.left = (e.clientX - r.left) + 'px'; g.style.top = (e.clientY - r.top) + 'px'; } });   // 光从指尖漫开
+
+  function paintShape() {
+    const cur = SHAPES.find(x => x[0] === cust.shape) || SHAPES[0];
+    $('#shapeBtn .val').innerHTML = svgI(cur[0]) + `<span>${ZH() ? cur[2] : cur[1]}</span>`;
+    $('#shapePop').innerHTML = SHAPES.map(([v, en, zh]) => `<button type="button" class="opt" role="option" data-v="${v}" aria-selected="${v === cust.shape}">${svgI(v)}<span>${ZH() ? zh : en}</span></button>`).join('');
+  }
+  $('#shapeBtn').onclick = () => toggle($('#shapeBtn'), $('#shapePop'));
+  $('#shapePop').addEventListener('click', e => { const o = e.target.closest('.opt'); if (!o) return; cust.shape = o.dataset.v; closePop(); paintShape(); if (st.custom) ua.set(opts()); syncURL(); $('#shapeBtn').focus(); });
+  $('#shapePop').addEventListener('keydown', e => { const os = [...$('#shapePop').querySelectorAll('.opt')], i = os.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') { e.preventDefault(); os[Math.min(os.length - 1, i + 1)].focus(); } else if (e.key === 'ArrowUp') { e.preventDefault(); os[Math.max(0, i - 1)].focus(); } });
+
+  const PALETTE = ['#7b6cff', '#9d8bd8', '#b7a6e6', '#d9cff5', '#5b4b9a', '#2f3170', '#f5f0f8', '#e8e4ee', '#5fe6ff', '#8fd3c2', '#c1f5ec', '#3f8f80', '#a9dccf', '#7fb5d9', '#cfe6f7', '#9a9fb8', '#fbb8b7', '#f2c7d3', '#e6c7da', '#d47a92', '#ffcf9a', '#f3d9a4', '#c98a52', '#8a5a3c'];
+  const hexToHsl = hex => { const n = parseInt(hex.slice(1), 16), r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2; let h = 0, s = 0;
+    if (mx !== mn) { const dd = mx - mn; s = l > .5 ? dd / (2 - mx - mn) : dd / (mx + mn); h = mx === r ? (g - b) / dd + (g < b ? 6 : 0) : mx === g ? (b - r) / dd + 2 : (r - g) / dd + 4; h *= 60; }
+    return [Math.round(h), Math.round(s * 100), Math.round(l * 100)]; };
+  const hslToHex = (h, s, l) => { s /= 100; l /= 100; const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l), f = n => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1)); return '#' + [f(0), f(8), f(4)].map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join(''); };
+  function colourPicker(key, root) {
+    const btn = root.querySelector('.pick-btn'), pop = root.querySelector('.pop');
+    pop.innerHTML = `<div class="pal">${PALETTE.map(c => `<button type="button" data-c="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('')}</div>
+      <div class="hsl"><label><span><span data-l="en">Hue</span><span data-l="zh">色相</span></span><input class="tr" type="range" min="0" max="360" step="1"></label>
+      <label><span><span data-l="en">Depth</span><span data-l="zh">浓淡</span></span><input class="tr" type="range" min="0" max="100" step="1"></label>
+      <label><span><span data-l="en">Light</span><span data-l="zh">明暗</span></span><input class="tr" type="range" min="20" max="96" step="1"></label></div>
+      <div class="hexline"><i class="cdot"></i><span class="hex"></span></div>`;
+    const ins = pop.querySelectorAll('input');
+    const show = (fromSliders) => { const c = cust[key]; root.querySelectorAll('.cdot').forEach(x => x.style.background = c); root.querySelectorAll('.hex').forEach(x => x.textContent = c.toUpperCase());
+      let [h, s, l] = hexToHsl(c); if (fromSliders) [h, s, l] = [+ins[0].value, +ins[1].value, +ins[2].value]; else { ins[0].value = h; ins[1].value = s; ins[2].value = l; }
+      ins[0].style.setProperty('--track', 'linear-gradient(90deg, hsl(0 72% 78%), hsl(50 72% 78%), hsl(110 60% 76%), hsl(170 62% 74%), hsl(220 70% 80%), hsl(270 66% 80%), hsl(320 66% 80%), hsl(360 72% 78%))');
+      ins[1].style.setProperty('--track', `linear-gradient(90deg, hsl(${h} 0% ${l}%), hsl(${h} 100% ${l}%))`);
+      ins[2].style.setProperty('--track', `linear-gradient(90deg, hsl(${h} ${s}% 20%), hsl(${h} ${s}% 58%), hsl(${h} ${s}% 96%))`);
+      pop.querySelectorAll('.pal button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === c.toLowerCase()))); };
+    const set = (c, fromSliders) => { cust[key] = c.toLowerCase(); show(fromSliders); if (st.custom) ua.set(opts()); syncURL(); };
+    pop.addEventListener('click', e => { const b = e.target.closest('.pal button'); if (b) set(b.dataset.c); });
+    pop.addEventListener('input', () => set(hslToHex(+ins[0].value, +ins[1].value, +ins[2].value), true));
+    btn.onclick = () => toggle(btn, pop);
+    show(); return () => show();
+  }
+  const colourPickers = [colourPicker('colour', $('#cColPick')), colourPicker('colour2', $('#cCol2Pick'))];
+  const fill = r => r.style.setProperty('--p', ((r.value - r.min) / (r.max - r.min) * 100) + '%');
+  document.querySelectorAll('#custom input[type=range]:not(.tr)').forEach(r => { fill(r); r.addEventListener('input', () => fill(r)); });
   paint();
 })();
 </script>
