@@ -147,21 +147,40 @@ const live = UniAether.texture({ mineral: 'quartz', colour: 'amethyst', transpar
 
 See [examples/pixi.html](examples/pixi.html), [examples/three.html](examples/three.html) and [examples/basic.html](examples/basic.html).
 
-## How it works
+## How it was made
 
-UniAether has five layers. Everything except the data is about 730 (long) lines of plain JavaScript and GLSL, with no dependencies.
+UniAether is about 700 lines of plain JavaScript and GLSL, with no dependencies, plus the mineral data. Nothing is drawn by hand or generated: each frame is one fragment shader working out what light does inside the stone.
 
-1. **Data.** Minerals carry their crystal system, refractive index, dispersion and optical character. Colours carry how they look, how they are layered, how rare they are and whether they glow.
-2. **Geometry.** A crystal is the space inside its faces: cube {100}, octahedron {111}, dodecahedron {110}, prisms and pyramids for the other systems. Twins follow real twin laws.
-3. **Optics.** One fragment shader casts a ray per pixel:
-   - Snell refraction in and out, with total internal reflection.
-   - Beer–Lambert absorption along the path.
-   - Zoning, pleochroism by direction, and dispersion along the edges.
-   - Faces mirror a painted environment, so a whole face changes colour as the stone turns.
-   - The ground picks up the light that passed through.
-   - Pigment grain and edge pooling give the watercolour and mineral-pigment texture.
-4. **Interaction.** Dragging with inertia, growth, star glints that land on the vertices facing the light.
-5. **Output.** Canvas, snapshots, sprite sheets, textures.
+```
+src/data   minerals, colours, sources
+   │
+src/core/colour.js    a colour → absorption per channel, growth zones, fluorescence
+src/core/forms.js     a habit → face planes, twins, clusters
+src/core/math.js      rotations and placement
+   │
+src/api.js            your options → one stone (mineral + colour + grade + light)
+   │
+src/core/renderer.js  WebGL2, drag and inertia, growth, glints, quality
+src/core/shader.js    one ray per pixel
+   │
+canvas · snapshot · sprite sheet + JSON · live texture
+```
+
+1. **Data** (`src/data/`). Each mineral has its crystal system, refractive index, dispersion and optical character. Each colour has its look, layering, rarity, cause and the sources it was checked against.
+2. **Colour** (`colour.js`). A colour is turned into an absorption coefficient for red, green and blue, so a thick part of the stone is deeper than a thin edge (Beer–Lambert). Zoning patterns (even, heart, core, rim, band, melon) lay up to seven of these along the growth direction. Fluorescent colours also carry the colour they glow under long-wave UV.
+3. **Geometry** (`forms.js`, `math.js`). A crystal is the space inside its faces. Each face is a plane `[nx, ny, nz, d]`: cube {100}, octahedron {111}, dodecahedron {110}, prisms and pyramids for the other systems; twins follow real twin laws. A crystal has up to 18 faces, and a cluster holds up to 5 crystals. A polished sphere is a flag, not a mesh.
+4. **Optics** (`shader.js`). For every pixel the shader casts a ray at the cluster:
+   - finds where it enters and leaves each convex crystal by clipping it against the face planes;
+   - bends it with Snell's law, and reflects it back inside when the angle is past critical (total internal reflection);
+   - steps through the stone 16 times, adding up absorption from the zones it passes, so the colour depends on how far light travelled and in which direction (pleochroism);
+   - splits colour along the edges by dispersion, and mirrors a painted environment on the faces, so a whole face changes colour as the stone turns;
+   - lights the ground by tracing from the paper back towards the lamp through the crystals, which gives the coloured projection;
+   - finishes with pigment grain, pooled edges and fine outlines, the watercolour and mineral-pigment texture;
+   - the grade adds frost, stains and phantoms; the UV lamp swaps daylight for fluorescence.
+5. **Motion** (`renderer.js`). Dragging with inertia, the growth animation, and star glints placed on the corners that face the light (worked out on the CPU, dimmed when another crystal covers them). Off-screen stones pause; slow devices lower the render scale.
+6. **Output** (`api.js`). The canvas itself, snapshots, and sprite sheets: the stone is rendered at twice the frame size for each angle, scaled down, packed into one image and described in a TexturePacker JSON Hash.
+
+`tools/build.mjs` joins the files into `dist/` (a script tag, ES module and CommonJS); `test/smoke.mjs` checks the data and, with Playwright, a real render.
 
 ## Limits
 
@@ -170,6 +189,8 @@ UniAether has five layers. Everything except the data is about 730 (long) lines 
 - Phones lower the render scale on their own when frames get slow.
 
 ## Credit, licence, citation
+
+Helen AphroIcy designed the concept, the aesthetics, the framework and the layout, and chose every colour from colour cards and real mineral photographs she collected. AI was part of the medium the code took shape through: *me, Fufu, and the medium between us*.
 
 - **Code:** MIT ([LICENSE](LICENSE)). Use it for anything, including commercial work, and keep the notice.
 - **Mineral data** (`src/data/`: the 26 looks, the 227 colours with their layering, rarity and notes, and the source list): CC BY-NC 4.0 ([LICENSE-DATA.md](LICENSE-DATA.md)).
@@ -194,7 +215,3 @@ UniAether is also a way of watching where these crystals go and what people make
 - If you like, add the badge [![Made with UniAether](https://img.shields.io/badge/made%20with-UniAether-b7a6e6)](https://aphrogenes.com).
 
 The library sends nothing anywhere. No analytics, no calls home.
-
-## How it was made
-
-Helen AphroIcy made the concept, the aesthetics, the framework and the layout. She chose every colour from colour cards and real mineral photographs she collected. The code took shape through long conversations with AI, which here is part of the medium: *me, Fufu, and the medium between us*.
