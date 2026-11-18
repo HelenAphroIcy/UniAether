@@ -75,13 +75,13 @@ src/core/shader.js    每个像素一条光线
 ## 限制
 
 - 需要WebGL2，现在的浏览器几乎都有。
-- 晶体是凸的，最多18个面，或者是一个球；一簇最多5颗。
+- 晶体是立体的，最多18个面（或者是一个球），一簇最多5颗。
 
 ## 许可和署名
 
 - **代码**：MIT。
 - **矿物数据**（`src/data/`）：CC BY-NC 4.0。非商用免费，署名就行；想商用，请通过[aphrogenes.com](https://aphrogenes.com)联系，或者用`UniAether.crystal()`自己造晶体。
-- **名字和标志**：UniAether、ISARO、浮浮这些名字和标志不在许可里。
+- **名字和标志**：UniAether、ISARO、浮浮（浮溟）这些名字和标志不在许可里。
 
 请这样署名：
 
