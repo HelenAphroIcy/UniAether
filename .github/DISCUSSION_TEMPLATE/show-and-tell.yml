@@ -1,0 +1,43 @@
+title: "[Made with UniAether] "
+labels: ["made-with"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for showing what you made. Every post here helps us see where these crystals travel.
+        谢谢你来分享！你做的东西会让我们看见这些矿晶去了哪里。
+  - type: textarea
+    id: what
+    attributes:
+      label: What did you make? · 你做了什么？
+      description: A game, a scene, a poster, an installation, a study… a few sentences are enough.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Where is it used? · 用在哪里？
+      options: [Game, Website or app, Art or design, Film or motion, Research or teaching, Something else]
+    validations:
+      required: true
+  - type: dropdown
+    id: how
+    attributes:
+      label: How did you use UniAether? · 怎么用的？
+      multiple: true
+      options: [Live (create / <uni-aether>), Sprite sheet in a game engine, Texture in PixiJS / Phaser / Three.js, My own crystal (UniAether.crystal), Snapshots]
+  - type: input
+    id: link
+    attributes:
+      label: Link · 链接
+  - type: textarea
+    id: media
+    attributes:
+      label: Pictures or a short video · 图片或短视频
+      description: Drag files here.
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Showing it · 展示
+      options:
+        - label: You may show this in the UniAether gallery and in Helen AphroIcy's research, with credit to me. · 可以放进 UniAether 作品墙和 Helen AphroIcy 的研究里，并署上我的名字。

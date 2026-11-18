@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UniAether · PixiJS</title>
+<style>body { margin: 0; background: #12122a; }</style>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@8.6.6/dist/pixi.min.js"></script>
+<script src="../dist/uniaether.js"></script>
+<script>
+(async () => {
+  const app = new PIXI.Application(); await app.init({ resizeTo: window, background: '#12122a', antialias: true }); document.body.appendChild(app.canvas);
+
+  // A. Live: the crystal is a texture that updates every frame (best for one or two hero stones).
+  const live = UniAether.texture({ mineral: 'spinel', grade: 'S', transparent: true, quality: .6 });
+  const tex = PIXI.Texture.from(live.canvas);
+  const hero = new PIXI.Sprite(tex); hero.anchor.set(.5); hero.scale.set(.5); app.stage.addChild(hero);
+  app.ticker.add(() => { tex.source.update(); hero.position.set(app.screen.width * .3, app.screen.height * .5); });
+  live.spin(.03);
+
+  // B. Baked: a sprite sheet made once, then as many sprites as you like (best for pickups, loot, inventories).
+  const sheet = await UniAether.sprites({ mineral: 'beryl', colour: 'aqua', grade: 'A', frames: 24, size: 128, background: 'none' });
+  const base = PIXI.Texture.from(sheet.canvas);
+  const frames = sheet.json.animations.turn.map(n => { const f = sheet.json.frames[n].frame; return new PIXI.Texture({ source: base.source, frame: new PIXI.Rectangle(f.x, f.y, f.w, f.h) }); });
+  for (let i = 0; i < 6; i++) { const s = new PIXI.AnimatedSprite(frames); s.anchor.set(.5); s.animationSpeed = .35; s.gotoAndPlay(i * 4); s.position.set(app.screen.width * .62 + (i % 3) * 140, app.screen.height * .35 + Math.floor(i / 3) * 160); app.stage.addChild(s); }
+})();
+</script>
+</body>
+</html>

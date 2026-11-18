@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UniAether</title>
+<meta name="description" content="Crystals computed from mineralogy and optics. Turn them, light them, invent your own, export sprite sheets for your game.">
+<!-- Anonymous totals (which minerals, lights and exports people choose; no ids, no IP). Empty = nothing is sent. -->
+<meta name="uniaether-count" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Italiana&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f4f2f7; --ink: #2b2f45; --ink-2: #5d6178; --ink-3: #8e91a6;
+    --mint: #8fd3c2; --mint-deep: #3f8f80; --lilac: #b7a6e6; --lilac-deep: #6f5fb4; --pearl: #fbfaf8; --rose: #f2c7d3;
+    --glass: rgba(255, 255, 255, .58); --rim: inset 0 0 0 .5px rgba(255, 255, 255, .95), inset 0 1px 0 rgba(255, 255, 255, .9);
+    --shadow: 0 18px 50px -18px rgba(70, 70, 120, .28), 0 2px 8px rgba(70, 70, 120, .06);
+    --serif: 'Cormorant Garamond', 'Noto Serif SC', Georgia, serif; --display: 'Italiana', 'Noto Serif SC', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Noto Sans SC', sans-serif;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  html { scrollbar-width: none; } html::-webkit-scrollbar, *::-webkit-scrollbar { display: none; }
+  body { min-height: 100vh; background: radial-gradient(120% 70% at 18% 8%, #fdfcfb 0, #f1eef8 46%, #e9f3f1 100%); }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 28px 28px 60px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr); gap: 32px; align-items: start; }
+  header { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+  h1 { margin: 0; font: 400 48px/1 var(--display); letter-spacing: .02em; }
+  .tag { font: italic 400 19px/1.3 var(--serif); color: var(--ink-2); margin: 0; flex: 1 1 280px; }
+  .lang { margin-left: auto; display: flex; gap: 2px; padding: 3px; border-radius: 14px; background: var(--glass); box-shadow: var(--rim), var(--shadow); backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); }
+  .lang button, .seg button { border: 0; background: transparent; color: var(--ink-2); font: 500 13px/1 var(--sans); padding: 8px 12px; border-radius: 11px; cursor: pointer; }
+  .lang button[aria-pressed="true"], .seg button[aria-pressed="true"] { background: rgba(255, 255, 255, .92); color: var(--ink); box-shadow: 0 1px 4px rgba(60, 60, 110, .12); }
+  .seg button:disabled { opacity: .35; cursor: default; }
+  .stagebox { position: sticky; top: 20px; border-radius: 30px; overflow: hidden; background: var(--glass); box-shadow: var(--rim), var(--shadow); }
+  #stage { width: 100%; touch-action: pan-y; }
+  .cap { position: absolute; left: 22px; right: 22px; bottom: 18px; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; pointer-events: none; }
+  .cap b { display: block; font: 500 26px/1.1 var(--serif); }
+  .cap span { display: block; font: italic 400 15px/1.4 var(--serif); color: var(--ink-2); margin-top: 3px; }
+  .cap .hint { font: italic 400 13px/1.3 var(--serif); color: var(--ink-3); text-align: right; }
+  .panel { display: grid; gap: 16px; }
+  .card { padding: 18px 18px 16px; border-radius: 24px; background: var(--glass); box-shadow: var(--rim), var(--shadow); backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%); }
+  .card h2 { margin: 0 0 12px; font: italic 500 17px/1.2 var(--serif); color: var(--ink-2); letter-spacing: .01em; }
+  html[lang="zh-CN"] .card h2 { font: 600 15px/1.2 'Noto Serif SC', serif; font-style: normal; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 0; cursor: pointer; padding: 7px 11px; border-radius: 12px; background: rgba(255, 255, 255, .55); color: var(--ink); font: 500 13.5px/1.1 var(--sans); box-shadow: inset 0 0 0 .5px rgba(80, 80, 130, .14); }
+  .chip[aria-pressed="true"] { background: linear-gradient(135deg, #e6fbf5, #efe9ff); box-shadow: inset 0 0 0 1px rgba(111, 95, 180, .35), 0 2px 8px rgba(111, 95, 180, .15); color: #2b2f45; }
+  .sw { display: grid; grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); gap: 8px; }
+  .sw button { position: relative; aspect-ratio: 1; border: 0; border-radius: 50%; cursor: pointer; box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, .12), inset 0 2px 4px rgba(255, 255, 255, .55), 0 2px 6px rgba(60, 60, 110, .12); }
+  .sw button[aria-pressed="true"] { outline: 2px solid var(--lilac-deep); outline-offset: 2px; }
+  .sw button i { position: absolute; right: -3px; top: -3px; width: 9px; height: 9px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1.5px #c9a2ff, 0 0 8px #a98cff; }
+  .colname { margin: 10px 0 0; font: 500 18px/1.3 var(--serif); }
+  .colname small { display: block; font: italic 400 14.5px/1.45 var(--serif); color: var(--ink-2); margin-top: 2px; }
+  .row { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 10px; margin-top: 10px; }
+  .row label { font: italic 400 15px/1.2 var(--serif); color: var(--ink-2); }
+  html[lang="zh-CN"] .row label { font: 400 13.5px/1.2 'Noto Serif SC', serif; font-style: normal; }
+  .seg { display: flex; flex-wrap: wrap; gap: 2px; padding: 3px; border-radius: 14px; background: rgba(255, 255, 255, .42); box-shadow: inset 0 0 0 .5px rgba(80, 80, 130, .12); }
+  .seg button { flex: 1 1 auto; padding: 8px 10px; }
+  input[type=range] { width: 100%; accent-color: var(--lilac-deep); }
+  input[type=color] { width: 100%; height: 34px; border: 0; border-radius: 10px; background: transparent; padding: 0; cursor: pointer; }
+  select { width: 100%; padding: 8px 10px; border-radius: 11px; border: 0; background: rgba(255, 255, 255, .7); color: #2b2f45; font: 500 13.5px var(--sans); box-shadow: inset 0 0 0 .5px rgba(80, 80, 130, .18); }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .btn { border: 0; cursor: pointer; padding: 11px 16px; border-radius: 14px; font: 600 14px/1 var(--sans); color: #2b2f45; background: linear-gradient(135deg, rgba(232, 251, 245, .95), rgba(239, 233, 255, .95)); box-shadow: inset 0 0 0 .5px rgba(255, 255, 255, .9), 0 6px 16px -6px rgba(111, 95, 180, .4); }
+  .btn.soft { background: rgba(255, 255, 255, .6); box-shadow: inset 0 0 0 .5px rgba(80, 80, 130, .16); font-weight: 500; }
+  .btn:disabled { opacity: .5; cursor: progress; }
+  .note { margin: 10px 0 0; font: italic 400 14.5px/1.5 var(--serif); color: var(--ink-2); }
+  .credit { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, .5); font: 400 13px/1.5 ui-monospace, Menlo, monospace; color: #3a3d55; word-break: break-word; }
+  .src { margin-top: 8px; font: italic 400 14px/1.6 var(--serif); color: var(--ink-3); }
+  .src a { color: inherit; }
+  footer { grid-column: 1 / -1; font: italic 400 15px/1.6 var(--serif); color: var(--ink-3); text-align: center; margin-top: 8px; }
+  footer a { color: inherit; }
+  html [data-l] { display: none !important; } html[lang="en"] [data-l="en"], html[lang="zh-CN"] [data-l="zh"] { display: inline !important; }
+  #custom[hidden], .row[hidden] { display: none; }
+  @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; padding: 16px 16px 40px; gap: 18px; } h1 { font-size: 40px; } .stagebox { position: relative; top: 0; } .row { grid-template-columns: 84px 1fr; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>UniAether</h1>
+    <p class="tag"><span data-l="en">Crystals computed from mineralogy and optics. Every pixel follows light through the stone.</span><span data-l="zh">按矿物学和光学算出来的矿晶。每个像素都跟着光穿过石头。</span></p>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="zh-CN" aria-pressed="false">中文</button></div>
+  </header>
+
+  <div class="stagebox">
+    <div id="stage"></div>
+    <div class="cap"><div><b id="capName"></b><span id="capSub"></span></div><div class="hint"><span data-l="en">Drag to turn</span><span data-l="zh">拖动可以转</span></div></div>
+  </div>
+
+  <div class="panel">
+    <section class="card">
+      <h2><span data-l="en">Mineral</span><span data-l="zh">矿物</span></h2>
+      <div class="chips" id="minerals"></div>
+      <div class="chips" style="margin-top:8px"><button class="chip" id="mine"><span data-l="en">Make your own</span><span data-l="zh">自己造一块</span></button></div>
+    </section>
+
+    <section class="card" id="colours">
+      <h2><span data-l="en">Colour</span><span data-l="zh">颜色</span></h2>
+      <div class="sw" id="sw"></div>
+      <p class="colname" id="colName"></p>
+      <p class="src" id="src"></p>
+    </section>
+
+    <section class="card" id="custom" hidden>
+      <h2><span data-l="en">Your crystal</span><span data-l="zh">你的晶体</span></h2>
+      <div class="row"><label><span data-l="en">Shape</span><span data-l="zh">形状</span></label><select id="cShape"></select></div>
+      <div class="row"><label><span data-l="en">Sides</span><span data-l="zh">几个面</span></label><input type="range" id="cN" min="3" max="9" step="1" value="6"></div>
+      <div class="row"><label><span data-l="en">Crystals</span><span data-l="zh">几颗</span></label><input type="range" id="cCount" min="1" max="5" step="1" value="3"></div>
+      <div class="row"><label><span data-l="en">Colour</span><span data-l="zh">颜色</span></label><input type="color" id="cCol" value="#7b6cff"></div>
+      <div class="row"><label><span data-l="en">Rim colour</span><span data-l="zh">边上的颜色</span></label><input type="color" id="cCol2" value="#5fe6ff"></div>
+      <div class="row"><label><span data-l="en">Inner glow</span><span data-l="zh">内光</span></label><input type="range" id="cGlow" min="0" max="1" step=".05" value=".4"></div>
+      <div class="row"><label><span data-l="en">Iridescence</span><span data-l="zh">晕彩</span></label><input type="range" id="cIri" min="0" max="1" step=".05" value=".5"></div>
+      <div class="row"><label><span data-l="en">Fire</span><span data-l="zh">火彩</span></label><input type="range" id="cFire" min="0" max="4" step=".1" value="1.8"></div>
+      <p class="note"><span data-l="en">Shapes can be invented; the optics stay true.</span><span data-l="zh">形状可以是虚构的，光学照真的算。</span></p>
+    </section>
+
+    <section class="card">
+      <h2><span data-l="en">Look</span><span data-l="zh">看法</span></h2>
+      <div class="row" id="formRow"><label><span data-l="en">Form</span><span data-l="zh">形态</span></label><div class="seg" id="formSeg"></div></div>
+      <div class="row"><label><span data-l="en">Grade</span><span data-l="zh">品相</span></label><div class="seg" id="grade"></div></div>
+      <div class="row"><label><span data-l="en">Light</span><span data-l="zh">灯</span></label><div class="seg" id="light"></div></div>
+      <div class="row"><label><span data-l="en">Projection</span><span data-l="zh">投影</span></label><div class="seg" id="proj"></div></div>
+    </section>
+
+    <section class="card">
+      <h2><span data-l="en">Take it with you</span><span data-l="zh">带走</span></h2>
+      <div class="row"><label><span data-l="en">Frames</span><span data-l="zh">帧数</span></label><div class="seg" id="frames"></div></div>
+      <div class="row"><label><span data-l="en">Size</span><span data-l="zh">每帧大小</span></label><div class="seg" id="fsize"></div></div>
+      <div class="row"><label><span data-l="en">Background</span><span data-l="zh">背景</span></label><div class="seg" id="fbg"></div></div>
+      <div class="btns">
+        <button class="btn" id="goSheet"><span data-l="en">Sprite sheet + JSON</span><span data-l="zh">精灵图 + JSON</span></button>
+        <button class="btn soft" id="goSnap"><span data-l="en">Snapshot</span><span data-l="zh">截图</span></button>
+        <button class="btn soft" id="goLink"><span data-l="en">Copy link</span><span data-l="zh">复制链接</span></button>
+      </div>
+      <p class="note" id="sheetNote"><span data-l="en">The sheet turns the stone once. The JSON is TexturePacker's JSON Hash: PixiJS and Phaser read it as is; Unity, Godot and GameMaker have importers.</span><span data-l="zh">精灵图是石头转一圈。JSON 是 TexturePacker 的 JSON Hash 格式：PixiJS、Phaser 直接能读，Unity、Godot、GameMaker 有现成的导入插件。</span></p>
+      <div class="credit" id="credit">Crystals rendered with UniAether by Helen AphroIcy · aphrogenes.com</div>
+      <p class="note"><span data-l="en">Made something? Show it in Discussions → Show and tell, and tag your repository <i>uniaether</i>.</span><span data-l="zh">做了什么？发到 Discussions 的 Show and tell，仓库打上 <i>uniaether</i> 标签。</span></p>
+    </section>
+  </div>
+
+  <footer><span data-l="en">“By aesthetic, I mean responsive to the pattern which connects.” Gregory Bateson, <i>Mind and Nature</i>, 1979.</span><span data-l="zh">「我说的美学，是对那连接一切的模式有所回应。」Gregory Bateson，《心灵与自然》，1979。</span><br>
+    <span data-l="en">UniAether by Helen AphroIcy · code MIT, mineral data CC BY-NC 4.0 · <a href="https://aphrogenes.com">aphrogenes.com</a></span><span data-l="zh">UniAether · Helen AphroIcy · 代码 MIT，矿物数据 CC BY-NC 4.0 · <a href="https://aphrogenes.com">aphrogenes.com</a></span></footer>
+</div>
+
+<script src="../dist/uniaether.js"></script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const P = new URLSearchParams(location.search);
+  let lang = P.get('lang') || (localStore('ua-lang') || ((navigator.language || 'en').toLowerCase().startsWith('zh') ? 'zh-CN' : 'en'));
+  const ZH = () => lang === 'zh-CN';
+  function localStore(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (_) { return null; } }
+  const MIN = UniAether.minerals();
+  const st = { sphere: P.get('s') === '1', mineral: P.get('m') || 'fluorite', colour: P.get('c') || undefined, grade: P.get('g') || 'A', light: P.get('l') || 'day', projection: P.get('p') !== '0', custom: P.get('m') === 'custom' };
+  const cust = { shape: P.get('cs') || 'prism', n: +(P.get('cn') || 6), count: +(P.get('cc') || 3), colour: '#' + (P.get('cc1') || '7b6cff'), colour2: '#' + (P.get('cc2') || '5fe6ff'), glow: +(P.get('cg') ?? .4), iri: +(P.get('ci') ?? .5), fire: +(P.get('cf') ?? 1.8) };
+  const exp = { frames: 36, size: 256, bg: 'none' };
+  const count = (e, d) => { const url = document.querySelector('meta[name="uniaether-count"]')?.content; if (!url) return; try { navigator.sendBeacon(url, JSON.stringify({ e, ...d })); } catch (_) {} };   // 只有匿名总数；默认什么都不发
+
+  function crystalDef() {
+    const forms = Array.from({ length: cust.count }, (_, i) => ({ shape: cust.shape, n: cust.n, size: i ? .62 - i * .06 : 1.25, at: i ? [Math.cos(i * 2.4) * .95, -.5 - (i % 2) * .15, Math.sin(i * 2.4) * .55] : [0, 0, 0], turn: [i * 1.7 + .3, .22 + i * .1, i * .8 + .25] }));
+    return { name: ZH() ? '你的晶体' : 'Your crystal', forms, colour: cust.colour, colour2: cust.colour2, zone: 'rim', glow: cust.glow > 0 ? cust.colour2 : undefined, glowStrength: cust.glow, iridescence: cust.iri || undefined, iridescenceHue: .6, dispersion: cust.fire, ior: 1.6 + cust.fire * .08, lustre: 1.25, fluorescence: cust.colour2 };
+  }
+  const opts = () => st.custom ? { crystal: crystalDef(), grade: st.grade, light: st.light, projection: st.projection }
+    : { mineral: st.mineral, colour: st.colour, sphere: st.sphere, grade: st.grade, light: st.light, projection: st.projection };
+  const ua = UniAether.create('#stage', { ...opts(), quality: matchMedia('(max-width: 860px)').matches ? .75 : 1 });
+  if (!ua) { $('#stage').innerHTML = '<p style="padding:40px;font:italic 18px var(--serif)">WebGL2 is needed to show the crystals.</p>'; return; }
+
+  function seg(id, items, cur, on, disabled = () => false) {
+    const box = $('#' + id); box.innerHTML = '';
+    for (const [v, en, zh] of items) { const b = document.createElement('button'); b.type = 'button'; b.textContent = ZH() ? zh : en; b.setAttribute('aria-pressed', String(v === cur)); b.disabled = disabled(v); b.onclick = () => on(v); box.append(b); }
+  }
+  function paint() {
+    document.documentElement.lang = lang; 
+    document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+    const mb = $('#minerals'); mb.innerHTML = '';
+    for (const m of MIN) { const b = document.createElement('button'); b.className = 'chip'; b.textContent = ZH() ? m.name.zh : m.name.en; b.setAttribute('aria-pressed', String(!st.custom && m.id === st.mineral)); b.onclick = () => { st.custom = false; st.mineral = m.id; st.colour = undefined; update(true); count('pick', { m: m.id }); }; mb.append(b); }
+    $('#mine').setAttribute('aria-pressed', String(st.custom)); $('#formRow').hidden = st.custom;
+    $('#colours').hidden = st.custom; $('#custom').hidden = !st.custom;
+    const m = MIN.find(x => x.id === st.mineral) || MIN[0], col = st.custom ? null : (m.colours.find(c => c.id === st.colour) || m.colours[0]);
+    if (!st.custom) {
+      const sw = $('#sw'); sw.innerHTML = '';
+      for (const c of m.colours) { const b = document.createElement('button'); const s = c.swatch || [c.hex]; b.style.background = s.length > 1 ? `radial-gradient(circle at 50% 50%, ${s[0]} 0 38%, ${s[1]} 70%)` : c.hex; b.title = (ZH() ? c.name.zh : c.name.en) + ` · ${c.chance}%`; b.setAttribute('aria-label', b.title); b.setAttribute('aria-pressed', String(c.id === col.id));
+        if (c.uv) b.append(Object.assign(document.createElement('i'), { title: 'UV' }));
+        b.onclick = () => { st.colour = c.id; update(true); count('pick', { m: m.id, c: c.id }); }; sw.append(b); }
+      const rr = { common: ['common', '常见'], uncommon: ['uncommon', '少见'], rare: ['rare', '稀有'], mythic: ['very rare', '极稀有'] }[col.rarity] || ['', ''];
+      const cause = col.cause ? (ZH() ? col.cause.zh : col.cause.en) : '', where = col.where ? (ZH() ? col.where.zh : col.where.en) : '';
+      $('#colName').innerHTML = `${ZH() ? col.name.zh : col.name.en}<small>${ZH() ? rr[1] : rr[0]} · ${ZH() ? '约' : 'about'} ${col.chance}%${where ? ' · ' + where : ''}${cause ? '<br>' + cause : ''}</small>`;
+      $('#src').innerHTML = (ZH() ? '出处：' : 'Sources: ') + UniAether.sources(m.id).slice(0, 6).map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ');
+      $('#capName').textContent = ZH() ? `${m.name.zh} · ${col.name.zh}` : `${m.name.en} · ${col.name.en}`; $('#capSub').textContent = `${m.formula} · ${ZH() ? m.system.zh : m.system.en} · ${ZH() ? '莫氏硬度' : 'Mohs'} ${m.mohs}`;
+    } else { $('#capName').textContent = ZH() ? '你的晶体' : 'Your crystal'; $('#capSub').textContent = ZH() ? '形状虚构，光学是真的' : 'An invented shape, true optics'; }
+    const sup = ua.supports;
+    seg('formSeg', [[false, 'Crystal', '晶体'], [true, 'Polished sphere', '磨圆的球']], st.sphere, v => { st.sphere = v; update(true); count('form', { sphere: v }); });
+    seg('grade', ['D', 'C', 'B', 'A', 'S'].map(g => [g, g, g]), st.grade, g => { st.grade = g; update(); });
+    seg('light', [['day', 'Daylight', '日光'], ['uv', 'Long-wave UV', '长波紫外灯'], ['lamp', 'Lamplight', '白炽灯']], st.light, l => { st.light = l; update(l === 'lamp' || st.light === 'lamp'); count('light', { l }); }, v => (v === 'uv' && !sup.uv) || (v === 'lamp' && !sup.lamp && !st.custom));
+    seg('proj', [[true, 'On', '显示'], [false, 'Off', '不显示']], st.projection, p => { st.projection = p; update(); });
+    seg('frames', [[24, '24', '24'], [36, '36', '36'], [72, '72', '72']], exp.frames, f => { exp.frames = f; paint(); });
+    seg('fsize', [[128, '128', '128'], [256, '256', '256'], [512, '512', '512']], exp.size, s => { exp.size = s; paint(); });
+    seg('fbg', [['none', 'Transparent', '透明'], ['paper', 'Paper', '纸']], exp.bg, b => { exp.bg = b; paint(); });
+    $('#cShape').innerHTML = [['prism', 'Prism with tips', '带尖的柱'], ['bipyramid', 'Bipyramid', '双锥'], ['octahedron', 'Octahedron', '八面体'], ['cube', 'Cube', '立方体'], ['cuboctahedron', 'Cuboctahedron', '立方八面体'], ['dodecahedron', 'Dodecahedron', '十二面体'], ['quartz', 'Quartz habit', '石英的样子'], ['tourmaline', 'Tourmaline habit', '碧玺的样子'], ['blade', 'Blade', '刀片']].map(([v, en, zh]) => `<option value="${v}"${v === cust.shape ? ' selected' : ''}>${ZH() ? zh : en}</option>`).join('');
+  }
+  function update(ore) {
+    if (!ua.supports) return;
+    ua.set(opts());
+    if (st.light === 'uv' && !ua.supports.uv) { st.light = 'day'; ua.set({ light: 'day' }); }
+    if (st.light === 'lamp' && !ua.supports.lamp && !st.custom) { st.light = 'day'; ua.set({ light: 'day' }); }
+    paint(); syncURL();
+  }
+  function syncURL() {
+    const q = new URLSearchParams(); q.set('m', st.custom ? 'custom' : st.mineral); if (st.sphere && !st.custom) q.set('s', '1'); if (!st.custom && st.colour) q.set('c', st.colour); q.set('g', st.grade); if (st.light !== 'day') q.set('l', st.light); if (!st.projection) q.set('p', '0');
+    if (st.custom) { q.set('cs', cust.shape); q.set('cn', cust.n); q.set('cc', cust.count); q.set('cc1', cust.colour.slice(1)); q.set('cc2', cust.colour2.slice(1)); q.set('cg', cust.glow); q.set('ci', cust.iri); q.set('cf', cust.fire); }
+    history.replaceState(null, '', '?' + q.toString());
+  }
+  document.querySelectorAll('.lang button').forEach(b => b.onclick = () => { lang = b.dataset.lang; localStore('ua-lang', lang); paint(); });
+  $('#mine').onclick = () => { st.custom = true; update(true); count('pick', { m: 'custom' }); };
+  const bind = (id, key, num = true) => $('#' + id).addEventListener('input', e => { cust[key] = num ? +e.target.value : e.target.value; if (st.custom) ua.set(opts()); syncURL(); });
+  bind('cN', 'n'); bind('cCount', 'count'); bind('cCol', 'colour', false); bind('cCol2', 'colour2', false); bind('cGlow', 'glow'); bind('cIri', 'iri'); bind('cFire', 'fire');
+  $('#cShape').addEventListener('change', e => { cust.shape = e.target.value; if (st.custom) ua.set(opts()); syncURL(); });
+  for (const [id, k] of [['cN', 'n'], ['cCount', 'count'], ['cCol', 'colour'], ['cCol2', 'colour2'], ['cGlow', 'glow'], ['cIri', 'iri'], ['cFire', 'fire']]) $('#' + id).value = cust[k];
+  const save = (blob, name) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); };
+  $('#goSnap').onclick = () => { ua.snapshot({ canvas: true }).toBlob(b => save(b, `uniaether-${st.custom ? 'crystal' : st.mineral}.png`)); count('export', { kind: 'snapshot', m: st.custom ? 'custom' : st.mineral }); };
+  $('#goSheet').onclick = async () => {
+    const btn = $('#goSheet'); btn.disabled = true;
+    try { const r = await UniAether.sprites({ ...opts(), frames: exp.frames, size: exp.size, background: exp.bg });
+      save(await r.png(), `${r.name}.png`); save(new Blob([JSON.stringify(r.json, null, 2)], { type: 'application/json' }), `${r.name}.json`);
+      count('export', { kind: 'sheet', m: st.custom ? 'custom' : st.mineral, frames: exp.frames, size: exp.size, bg: exp.bg }); }
+    catch (e) { alert(e.message); } finally { btn.disabled = false; } };
+  $('#goLink').onclick = async () => { try { await navigator.clipboard.writeText(location.href); $('#goLink').classList.add('done'); } catch (_) {} };
+  paint();
+})();
+</script>
+</body>
+</html>

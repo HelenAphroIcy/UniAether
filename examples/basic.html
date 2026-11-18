@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UniAether · basic</title>
+<style>
+  body { margin: 0; padding: 24px; background: #f4f2f7; font: 15px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #2b2f45; display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  figure { margin: 0; } figcaption { margin-top: 6px; font-style: italic; color: #5d6178; }
+</style>
+<script src="../dist/uniaether.js"></script>
+
+<!-- 1. One tag: change any attribute and the crystal follows. -->
+<figure><uni-aether mineral="fluorite" colour="emerald" grade="S"></uni-aether><figcaption>&lt;uni-aether mineral="fluorite" colour="emerald" grade="S"&gt;</figcaption></figure>
+<figure><uni-aether mineral="corundum" grade="A" light="uv"></uni-aether><figcaption>light="uv": only minerals with fluorescence on record glow</figcaption></figure>
+
+<!-- 2. The JS API -->
+<figure><div id="tour"></div><figcaption>UniAether.create(…) and stone.set({ colour }) every few seconds</figcaption></figure>
+<figure><div id="mine"></div><figcaption>UniAether.crystal: an invented shape, true optics</figcaption></figure>
+
+<script>
+  const tour = UniAether.create('#tour', { mineral: 'tourmaline', colour: 0, grade: 'S' });
+  setInterval(() => tour.set({ colour: Math.floor(Math.random() * 10) }), 4000);
+
+  UniAether.create('#mine', {
+    crystal: {
+      name: 'Aether shard',
+      forms: [
+        { shape: 'prism', n: 6, size: 1.25, params: { length: 1.3, width: .42, tip: .7 } },
+        { shape: 'bipyramid', n: 9, size: .5, at: [-.9, -.6, .3] },
+        { shape: 'prism', n: 3, size: .55, at: [.9, -.5, .5] },
+      ],
+      colour: '#7b6cff', colour2: '#5fe6ff', zone: 'rim',
+      glow: '#5fe6ff', glowStrength: .4, iridescence: .5, dispersion: 1.8, ior: 1.75, fluorescence: '#5fe6ff',
+    },
+  });
+</script>
+</html>

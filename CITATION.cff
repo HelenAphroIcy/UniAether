@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use UniAether in research, a publication or a portfolio, please cite it like this."
+title: "UniAether: crystals computed from mineralogy and optics"
+type: software
+authors:
+  - given-names: Helen
+    family-names: AphroIcy
+    website: "https://aphrogenes.com"
+version: 0.1.0
+license:
+  - MIT
+  - CC-BY-NC-4.0
+url: "https://aphrogenes.com"
+repository-code: "https://github.com/HelenAphroIcy/UniAether"
+keywords:
+  - crystal rendering
+  - mineralogy
+  - WebGL2
+  - information experience design
+  - cybernetics
+abstract: >-
+  UniAether renders mineral crystals live in the browser. Each crystal is a set of
+  faces taken from mineralogy; every pixel follows light through it: refraction,
+  absorption by thickness, colour zoning, pleochroism, dispersion, fluorescence,
+  and the coloured projection it casts. It grew out of the Ore Projection aesthetic
+  system for Fufu, ISARO and the Crystal Atlas.

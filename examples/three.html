@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UniAether · Three.js</title>
+<style>body { margin: 0; background: #0f1020; overflow: hidden; }</style>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }</script>
+<script type="module">
+  import * as THREE from 'three';
+  import UniAether from '../dist/uniaether.mjs';
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(innerWidth, innerHeight); renderer.setPixelRatio(Math.min(2, devicePixelRatio)); document.body.appendChild(renderer.domElement);
+  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, .1, 100); camera.position.set(0, 0, 6);
+
+  // The crystal is drawn by UniAether on its own canvas (transparent background) and shown on a billboard that always faces the camera.
+  const stone = UniAether.texture({ mineral: 'quartz', colour: 'amethyst', grade: 'S', transparent: true, projection: false, quality: .7 });
+  const tex = new THREE.CanvasTexture(stone.canvas); tex.colorSpace = THREE.SRGBColorSpace;
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, premultipliedAlpha: true })); sprite.scale.set(2.6, 2.6 * 1040 / 880, 1); scene.add(sprite);
+
+  // Turning the stone follows the mouse, so it feels like a 3D object.
+  addEventListener('pointermove', e => stone.turn((e.clientX / innerWidth - .5) * 3, (e.clientY / innerHeight - .5) * .8));
+  addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+  renderer.setAnimationLoop(t => { tex.needsUpdate = true; sprite.position.y = Math.sin(t / 900) * .12; renderer.render(scene, camera); });
+</script>
+</html>

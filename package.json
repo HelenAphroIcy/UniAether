@@ -1,0 +1,20 @@
+{
+  "name": "uniaether",
+  "version": "0.1.0",
+  "description": "Crystals computed from mineralogy and optics, live in WebGL2: faces, refraction, colour by thickness, zoning, pleochroism, fluorescence and the coloured projection they cast. With a sprite-sheet exporter for game engines.",
+  "keywords": ["crystal", "mineral", "gem", "webgl2", "shader", "ray-tracing", "procedural", "generative-art", "game-asset", "sprite-sheet", "pixijs", "threejs", "phaser"],
+  "author": "Helen AphroIcy (https://aphrogenes.com)",
+  "homepage": "https://github.com/HelenAphroIcy/UniAether",
+  "repository": { "type": "git", "url": "git+https://github.com/HelenAphroIcy/UniAether.git" },
+  "bugs": "https://github.com/HelenAphroIcy/UniAether/issues",
+  "license": "MIT AND CC-BY-NC-4.0",
+  "type": "module",
+  "main": "dist/uniaether.cjs",
+  "browser": "dist/uniaether.js",
+  "unpkg": "dist/uniaether.js",
+  "jsdelivr": "dist/uniaether.js",
+  "module": "dist/uniaether.mjs",
+  "exports": { ".": { "import": "./dist/uniaether.mjs", "require": "./dist/uniaether.cjs" } },
+  "files": ["dist", "src", "LICENSE", "LICENSE-DATA.md", "NOTICE", "README.md", "README.zh-CN.md", "CITATION.cff"],
+  "scripts": { "build": "node tools/build.mjs", "test": "node tools/build.mjs && node test/smoke.mjs" }
+}
