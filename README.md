@@ -13,7 +13,7 @@ It comes with 26 minerals and 227 colours, each checked against its sources. It 
 
 ## Try it
 
-Open the [playground](playground/index.html): pick a mineral and a colour, change the grade and the light, turn it with your finger or mouse, and export it.
+Open the [playground](https://helenaphroicy.github.io/UniAether/playground/): pick a mineral and a colour, change the grade and the light, turn it with your finger or mouse, and export it.
 
 ## Use it
 

@@ -13,7 +13,7 @@
 
 ## 试一试
 
-打开[试玩页](playground/index.html)：挑矿物和颜色，换品相、换光，用手指或鼠标转，还能导出。
+打开[试玩页](https://helenaphroicy.github.io/UniAether/playground/)：挑矿物和颜色，换品相、换光，用手指或鼠标转，还能导出。
 
 ## 开始用
 
