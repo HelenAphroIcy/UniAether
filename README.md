@@ -7,13 +7,13 @@
 > “By aesthetic, I mean responsive to the pattern which connects.”
 > Gregory Bateson, *Mind and Nature: A Necessary Unity* (1979)
 
-Each crystal is built from real crystal faces, and every pixel follows light through the stone: refraction, colour that deepens with thickness, growth zones, pleochroism, dispersion, fluorescence under UV, and the coloured light it casts on the paper. Nothing is generated; every frame is computed.
+Each crystal is built from real crystal faces, and every pixel follows light through the stone: refraction, colour that deepens with thickness, growth zones, pleochroism, dispersion, fluorescence under UV, and the coloured light it casts on the paper. There is no generative content: the crystals' looks and motion are all computed in code.
 
 It comes with 26 minerals and 227 colours, each checked against its sources. It grew out of *Ore Projection*, the aesthetic system Helen AphroIcy made for her original character Fufu, the mineral game [ISARO](https://isaro.aphrogenes.com) and the Crystal Atlas.
 
 ## Try it
 
-Open the [playground](https://helenaphroicy.github.io/UniAether/playground/): pick a mineral and a colour, change the grade and the light, turn it with your finger or mouse, and export it.
+Open the [playground](https://helenaphroicy.github.io/UniAether/playground/): pick a mineral and a colour, change the grade and the light, turn the crystal with your finger or mouse, and export it in several formats.
 
 ## Use it
 
@@ -146,7 +146,7 @@ src/core/shader.js    one ray of light per pixel
 
 - **Code:** MIT ([LICENSE](LICENSE)).
 - **Mineral data** in `src/data/`: CC BY-NC 4.0 ([LICENSE-DATA.md](LICENSE-DATA.md)). Free for non-commercial work with credit. For commercial use, write through [aphrogenes.com](https://aphrogenes.com), or make your own crystals with `UniAether.crystal()`.
-- **Names:** UniAether, ISARO, Fufu and their marks are not licensed ([NOTICE](NOTICE)).
+- **Names:** UniAether, ISARO, Fufu (浮溟) and their marks are not licensed ([NOTICE](NOTICE)).
 
 Please credit it like this:
 
