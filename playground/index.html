@@ -365,7 +365,7 @@
       $('#colName').innerHTML = `${ZH() ? col.name.zh : col.name.en}<small>${ZH() ? rr[1] : rr[0]} · ${ZH() ? '约' : 'about '}${col.chance}%${where ? ' · ' + where : ''}${cause ? '<br>' + cause : ''}</small>`;
       $('#src').innerHTML = (ZH() ? '出处：' : 'Sources: ') + UniAether.sources(m.id).slice(0, 6).map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ');
       $('#capName').textContent = ZH() ? `${m.name.zh} · ${col.name.zh}` : `${m.name.en} · ${col.name.en}`; $('#capSub').textContent = `${m.formula} · ${ZH() ? m.system.zh : m.system.en} · ${ZH() ? '莫氏硬度' : 'Mohs '}${m.mohs}`;
-    } else { $('#capName').textContent = ZH() ? '你的晶体' : 'Your crystal'; $('#capSub').textContent = ZH() ? '形状是编的，光是真的' : 'A made-up shape, with real light'; }
+    } else { $('#capName').textContent = ZH() ? '你的晶体' : 'Your crystal'; $('#capSub').textContent = ''; }
     const sup = ua.supports;
     seg('formSeg', [[false, 'Crystal', '晶体'], [true, 'Polished sphere', '磨成球']], st.sphere, v => { st.sphere = v; update(true); count('form', { sphere: v }); });
     seg('grade', ['D', 'C', 'B', 'A', 'S'].map(g => [g, g, g]), st.grade, g => { st.grade = g; update(); });
