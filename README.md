@@ -1,37 +1,21 @@
 # UniAether
 
-**Crystals computed from mineralogy and optics.** 中文说明见 [README.zh-CN.md](README.zh-CN.md).
+**Mineral crystals computed from mineralogy and optics, live in the browser.** 中文说明见 [README.zh-CN.md](README.zh-CN.md).
 
 ![The UniAether playground: a fluorite cluster next to its controls](docs/hero.png)
 
 > “By aesthetic, I mean responsive to the pattern which connects.”
 > Gregory Bateson, *Mind and Nature: A Necessary Unity* (1979)
 
-UniAether draws mineral crystals live in the browser. Each crystal is a set of faces taken from mineralogy. Each pixel follows light through the stone:
+Each crystal is built from real crystal faces, and every pixel follows light through the stone: refraction, colour that deepens with thickness, growth zones, pleochroism, dispersion, fluorescence under UV, and the coloured light it casts on the paper. Nothing is generated; every frame is computed.
 
-- refraction at every face
-- colour absorbed by thickness
-- growth zones and phantoms
-- pleochroism, dispersion, labradorescence and asterism
-- fluorescence under a long-wave UV lamp
-- the coloured projection the stone casts on the ground
+It comes with 26 minerals and 227 colours, each checked against its sources. It grew out of *Ore Projection*, the aesthetic system Helen AphroIcy made for her original character Fufu, the mineral game [ISARO](https://isaro.aphrogenes.com) and the Crystal Atlas.
 
-Nothing in it is generated. Every frame is computed.
+## Try it
 
-It grew out of *Ore Projection*, the aesthetic system Helen AphroIcy made for her original character Fufu, the mineral game [ISARO](https://isaro.aphrogenes.com) and the Crystal Atlas. It ships with 26 minerals and 227 colours, every colour sourced.
+Open the [playground](playground/index.html): pick a mineral and a colour, change the grade and the light, turn it with your finger or mouse, and export it.
 
-## What you can do with it
-
-- **Show a mineral:** one HTML tag, turnable with a finger or the mouse.
-- **Light it:** daylight, long-wave UV or lamplight; alexandrite turns red under the lamp.
-- **Grade it:** D (rough) to S (museum grade). Lower grades are frostier, stained and duller; S glints.
-- **Put it on paper, or on nothing:** on paper it casts its coloured projection; with `transparent: true` it drops onto any page or game scene.
-- **Invent your own crystal:** any shape, colour, glow, iridescence or fire. The optics stay true.
-- **Take it into a game:** export a turning sprite sheet with a JSON atlas, or use the live canvas as a texture in PixiJS, Phaser or Three.js.
-
-Try everything in the [playground](playground/index.html).
-
-## Quick start
+## Use it
 
 ```html
 <script src="dist/uniaether.js"></script>
@@ -47,14 +31,19 @@ Or from JavaScript:
 import UniAether from './dist/uniaether.mjs';
 
 const stone = UniAether.create('#stage', { mineral: 'beryl', colour: 'aqua', grade: 'A' });
-stone.set({ light: 'uv' });          // change anything later
-stone.turn(.8, .1);                  // yaw, pitch (radians)
-const png = stone.snapshot({ crop: 'square', size: 512 });
+stone.set({ light: 'uv' });
 ```
 
-To see every mineral and colour, use `UniAether.minerals()`. For the sources behind them, use `UniAether.sources('beryl')`.
+The options you will use most:
 
-### Options
+- `mineral` and `colour`: see them all with `UniAether.minerals()`
+- `grade`: `D` (rough) to `S` (museum grade)
+- `light`: `day`, `uv` or `lamp`
+- `sphere: true`: the same mineral as a polished sphere
+- `transparent: true`: no background, for compositing
+
+<details>
+<summary>All options and methods</summary>
 
 | option | values | default |
 |---|---|---|
@@ -84,9 +73,12 @@ The instance has these methods:
 - `on('change' | 'lost' | 'unsupported', fn)`
 - `destroy()`
 
-## Make your own crystal
+</details>
 
-Shapes can be invented; the optics stay true.
+<details>
+<summary>Make your own crystal</summary>
+
+Any shape works; the light still behaves as it would in a real stone.
 
 ```js
 UniAether.create('#stage', {
@@ -115,103 +107,51 @@ UniAether.create('#stage', {
 
 A face is `[nx, ny, nz, d]`: a unit normal and its distance from the centre.
 
-## Polished spheres
-
-Mineral spheres are their own collecting tradition. Any mineral can be shown as one: `sphere: true` keeps its colours, growth zones, labradorescence and asterism.
-
-```js
-UniAether.create('#stage', { mineral: 'labradorite', sphere: true, grade: 'S' });
-```
+</details>
 
 ## In games
 
-**Sprite sheets work in any engine.** They turn the stone once and come with a TexturePacker JSON Hash atlas:
-
-- PixiJS and Phaser read the atlas as is.
-- Unity, Godot and GameMaker have importers for it.
-
 ```js
-const sheet = await UniAether.sprites({ mineral: 'spinel', grade: 'S', frames: 36, size: 256, background: 'none' });
-// sheet.canvas, sheet.json, await sheet.png()
+const sheet = await UniAether.sprites({ mineral: 'spinel', grade: 'S', frames: 36, size: 256 });   // a turning sprite sheet + TexturePacker JSON
+const live = UniAether.texture({ mineral: 'quartz', transparent: true });                         // a live canvas texture
 ```
 
-The playground has a button that does this for you.
-
-**Live textures** are for one or two hero stones:
-
-```js
-const live = UniAether.texture({ mineral: 'quartz', colour: 'amethyst', transparent: true });
-// PixiJS:   const tex = PIXI.Texture.from(live.canvas); app.ticker.add(() => tex.source.update());
-// Three.js: const tex = new THREE.CanvasTexture(live.canvas); every frame: tex.needsUpdate = true;
-```
-
-See [examples/pixi.html](examples/pixi.html), [examples/three.html](examples/three.html) and [examples/basic.html](examples/basic.html).
+PixiJS and Phaser read the sheet as it is; Unity, Godot and GameMaker have importers for it. Examples: [PixiJS](examples/pixi.html), [Three.js](examples/three.html), [plain HTML](examples/basic.html).
 
 ## How it was made
 
-UniAether is about 700 lines of plain JavaScript and GLSL, with no dependencies, plus the mineral data. Nothing is drawn by hand or generated: each frame is one fragment shader working out what light does inside the stone.
+About 700 lines of plain JavaScript and GLSL, no dependencies, plus the mineral data.
 
 ```
-src/data   minerals, colours, sources
-   │
+src/data              minerals, colours, sources
 src/core/colour.js    a colour → absorption per channel, growth zones, fluorescence
 src/core/forms.js     a habit → face planes, twins, clusters
-src/core/math.js      rotations and placement
-   │
-src/api.js            your options → one stone (mineral + colour + grade + light)
-   │
-src/core/renderer.js  WebGL2, drag and inertia, growth, glints, quality
-src/core/shader.js    one ray per pixel
-   │
-canvas · snapshot · sprite sheet + JSON · live texture
+src/api.js            your options → one stone
+src/core/renderer.js  WebGL2, dragging, growth, glints
+src/core/shader.js    one ray of light per pixel
 ```
 
-1. **Data** (`src/data/`). Each mineral has its crystal system, refractive index, dispersion and optical character. Each colour has its look, layering, rarity, cause and the sources it was checked against.
-2. **Colour** (`colour.js`). A colour is turned into an absorption coefficient for red, green and blue, so a thick part of the stone is deeper than a thin edge (Beer–Lambert). Zoning patterns (even, heart, core, rim, band, melon) lay up to seven of these along the growth direction. Fluorescent colours also carry the colour they glow under long-wave UV.
-3. **Geometry** (`forms.js`, `math.js`). A crystal is the space inside its faces. Each face is a plane `[nx, ny, nz, d]`: cube {100}, octahedron {111}, dodecahedron {110}, prisms and pyramids for the other systems; twins follow real twin laws. A crystal has up to 18 faces, and a cluster holds up to 5 crystals. A polished sphere is a flag, not a mesh.
-4. **Optics** (`shader.js`). For every pixel the shader casts a ray at the cluster:
-   - finds where it enters and leaves each convex crystal by clipping it against the face planes;
-   - bends it with Snell's law, and reflects it back inside when the angle is past critical (total internal reflection);
-   - steps through the stone 16 times, adding up absorption from the zones it passes, so the colour depends on how far light travelled and in which direction (pleochroism);
-   - splits colour along the edges by dispersion, and mirrors a painted environment on the faces, so a whole face changes colour as the stone turns;
-   - lights the ground by tracing from the paper back towards the lamp through the crystals, which gives the coloured projection;
-   - finishes with pigment grain, pooled edges and fine outlines, the watercolour and mineral-pigment texture;
-   - the grade adds frost, stains and phantoms; the UV lamp swaps daylight for fluorescence.
-5. **Motion** (`renderer.js`). Dragging with inertia, the growth animation, and star glints placed on the corners that face the light (worked out on the CPU, dimmed when another crystal covers them). Off-screen stones pause; slow devices lower the render scale.
-6. **Output** (`api.js`). The canvas itself, snapshots, and sprite sheets: the stone is rendered at twice the frame size for each angle, scaled down, packed into one image and described in a TexturePacker JSON Hash.
-
-`tools/build.mjs` joins the files into `dist/` (a script tag, ES module and CommonJS); `test/smoke.mjs` checks the data and, with Playwright, a real render.
+1. **Colour.** Each colour becomes an absorption rate for red, green and blue, so thick parts of the stone are deeper than thin edges (Beer–Lambert).
+2. **Shape.** A crystal is the space inside its faces: cube {100}, octahedron {111} and so on, up to 18 faces each and 5 crystals in a cluster.
+3. **Light.** For each pixel, a ray enters the crystal, bends (Snell's law), reflects inside when it must, and picks up colour from the zones it passes.
+4. **Ground.** The paper is lit by tracing back through the crystals to the lamp, which gives the coloured projection.
+5. **Finish.** Pigment grain and soft outlines give the watercolour and mineral-pigment look; the grade adds frost, stains and phantoms.
 
 ## Limits
 
-- It needs WebGL2, which nearly every current browser has.
-- Each crystal is convex, with up to 18 faces, or a sphere; a cluster holds up to 5.
-- Phones lower the render scale on their own when frames get slow.
+- Needs WebGL2, which nearly every current browser has.
+- Crystals are convex, up to 18 faces, or a sphere; up to 5 in a cluster.
 
-## Credit, licence, citation
+## Licence and credit
 
-Helen AphroIcy designed the concept, the aesthetics, the framework and the layout, and chose every colour from colour cards and real mineral photographs she collected. AI was part of the medium the code took shape through: *me, Fufu, and the medium between us*.
-
-- **Code:** MIT ([LICENSE](LICENSE)). Use it for anything, including commercial work, and keep the notice.
-- **Mineral data** (`src/data/`: the 26 looks, the 227 colours with their layering, rarity and notes, and the source list): CC BY-NC 4.0 ([LICENSE-DATA.md](LICENSE-DATA.md)).
-  - Free for non-commercial work, with credit.
-  - For commercial use, either write to Helen AphroIcy through [aphrogenes.com](https://aphrogenes.com), or make your own crystals with `UniAether.crystal()`.
+- **Code:** MIT ([LICENSE](LICENSE)).
+- **Mineral data** in `src/data/`: CC BY-NC 4.0 ([LICENSE-DATA.md](LICENSE-DATA.md)). Free for non-commercial work with credit. For commercial use, write through [aphrogenes.com](https://aphrogenes.com), or make your own crystals with `UniAether.crystal()`.
 - **Names:** UniAether, ISARO, Fufu and their marks are not licensed ([NOTICE](NOTICE)).
 
-**Please credit it like this**, wherever your work lists its tools:
+Please credit it like this:
 
 ```
 Crystals rendered with UniAether by Helen AphroIcy · aphrogenes.com
 ```
 
-For research, publications and portfolios, cite it with [CITATION.cff](CITATION.cff); GitHub shows a “Cite this repository” button.
-
-## Show what you made
-
-UniAether is also a way of watching where these crystals go and what people make of them.
-
-- Post your work in [Discussions → Show and tell](../../discussions/categories/show-and-tell).
-- Add the topic `uniaether` to your repository.
-- If you like, add the badge [![Made with UniAether](https://img.shields.io/badge/made%20with-UniAether-b7a6e6)](https://aphrogenes.com).
-
-The library sends nothing anywhere. No analytics, no calls home.
+To cite it, use [CITATION.cff](CITATION.cff). The library itself sends no data anywhere.
