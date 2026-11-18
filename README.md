@@ -2,7 +2,7 @@
 
 **Crystals computed from mineralogy and optics.** 中文说明见 [README.zh-CN.md](README.zh-CN.md).
 
-![A fluorite cluster in daylight, and the same stone glowing under a long-wave UV lamp](docs/hero.png)
+![The UniAether playground: a fluorite cluster next to its controls](docs/hero.png)
 
 > “By aesthetic, I mean responsive to the pattern which connects.”
 > Gregory Bateson, *Mind and Nature: A Necessary Unity* (1979)

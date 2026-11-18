@@ -2,7 +2,7 @@
 
 **按矿物学和光学算出来的矿晶。** English: [README.md](README.md).
 
-![同一簇萤石：日光下，和长波紫外灯下发出荧光](docs/hero.png)
+![UniAether试玩页：一簇萤石和旁边的控制面板](docs/hero-zh.png)
 
 > “By aesthetic, I mean responsive to the pattern which connects.”
 >「我说的美学，是对那连接一切的模式有所回应。」Gregory Bateson，《心灵与自然》（1979）
