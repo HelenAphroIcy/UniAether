@@ -7,13 +7,13 @@
 > “By aesthetic, I mean responsive to the pattern which connects.”
 >「我说的美学，是对那连接一切的模式有所回应。」Gregory Bateson，《心灵与自然》（1979）
 
-每一颗晶体都由真实的晶面组成，每个像素都跟着光穿过石头：折射、越厚颜色越深、生长色带、多色性、色散、紫外灯下的荧光，还有落在纸上的彩色投影。没有一样是生成的，每一帧都是算出来的。
+每一颗晶体都由真实的晶面组成，每个像素都跟着光穿过石头：折射、越厚颜色越深、生长色带、多色性、色散、紫外灯下的荧光，还有落在纸上的彩色投影。无生成式内容，矿晶基础样式、动效由代码算出。
 
 里面有26种矿物、227种颜色，每种颜色都核对过出处。它来自「矿石投影」，是Helen AphroIcy为她的原创角色浮浮、矿物游戏[ISARO](https://isaro.aphrogenes.com)和矿晶集做的矿晶美学系统。
 
 ## 试一试
 
-打开[试玩页](https://helenaphroicy.github.io/UniAether/playground/)：挑矿物和颜色，换品相、换光，用手指或鼠标转，还能导出。
+打开[试玩页](https://helenaphroicy.github.io/UniAether/playground/)：挑矿物和颜色，可换品相、换光，用手指或鼠标旋转矿晶，可选择多种导出形式。
 
 ## 开始用
 
