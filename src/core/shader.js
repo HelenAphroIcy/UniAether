@@ -267,20 +267,20 @@ void main(){
       day = mix(day, vec3(1., .992, .985), stp * kE * (.2 + .55 * max(0., sl)));
       day = mix(day, DEEP, sha * (1. - stp) * kE * .12); } }
   if (uEtch > .001 && frA < .5) {   // 蚀像：一片一片挤在一起，大的套小的、一层层往下（钻石八面体面上倒着的三角蚀像；锂辉石柱面上顺着 c 轴拉长的三角蚀痕；绿柱石底面上的六边形蚀坑、柱面上顺着 c 轴压扁的六边形）。同一面上的朝向都一样，一转，整片的同一面墙一起亮
-    vec3 aN = abs(nl), n0 = normalize(nl); float okF = uEtchT < .5 ? step(max(abs(aN.x - .57735), max(abs(aN.y - .57735), abs(aN.z - .57735))), .05) : (uEtchT < 1.5 ? 1. - step(.3, abs(n0.y)) : 1.), basal = step(.7, abs(n0.y));
+    vec3 aN = abs(nl), n0 = normalize(nl); float okF = uEtchT < .5 ? step(max(abs(aN.x - .57735), max(abs(aN.y - .57735), abs(aN.z - .57735))), .05) : (uEtchT < 1.5 ? 1. - step(.3, abs(n0.y)) : 1. - step(.3, abs(n0.y)) + step(.7, abs(n0.y))), basal = step(.7, abs(n0.y));   // 绿柱石：只蚀底面和柱面，中间斜着的小面保持光滑
     if (okF > .5 && dE > 2.) {
       vec3 v3 = uEtchT < .5 ? vec3(-sign(nl.x), 0., 0.) : (uEtchT > 1.5 && basal > .5 ? vec3(1., 0., 0.) : vec3(0., 1., 0.)); v3 -= n0 * dot(v3, n0);   // 尖朝哪儿：钻石朝着面的一条棱（和八面体面本身的三角反着），锂辉石、绿柱石顺着 c 轴
       vec2 up2 = normalize(vec2(dot(v3, t1), dot(v3, t2)) + 1e-5), rt2 = vec2(up2.y, -up2.x), rq0 = vec2(dot(p, t1), dot(p, t2)) * U, lp = vec2(dot(rq0, rt2), dot(rq0, up2));
-      float el = uEtchT < .5 ? 1. : (uEtchT < 1.5 ? 2.6 : mix(2.1, 1., basal)), elS = uEtchT > 1.5 ? mix(1.9, 1., basal) : 1., kE2 = uEtch * uSet * smoothstep(2., 6., dE), bF = lightOn(nw), best = 0., bestAll = -1e3, stH = 2., flr = 0.; vec2 bN = vec2(0.); vec3 hueS2 = day / max(.001, max(day.r, max(day.g, day.b)));
+      float T2 = step(1.5, uEtchT), el = uEtchT < .5 ? 1. : (uEtchT < 1.5 ? 2.6 : mix(2.8, 1., basal)), elS = T2 > .5 ? mix(3.2, 1., basal) : 1., kE2 = uEtch * uSet * smoothstep(2., 6., dE), bF = lightOn(nw), best = 0., bestAll = -1e3, stH = 2., flr = 0.; vec2 bN = vec2(0.); vec3 hueS2 = day / max(.001, max(day.r, max(day.g, day.b)));
       for (int L3 = 0; L3 < 3; L3++) {
-        float cs = L3 == 0 ? 44. : (L3 == 1 ? 18. : 7.5); vec2 csv = vec2(cs, cs * el), cb = floor(lp / csv);   // 三层大小：大的、中的、碎的；格子顺着晶体的方向排，所以会排成行
+        float cs = (L3 == 0 ? 44. : (L3 == 1 ? 18. : 7.5)) * mix(1., mix(.62, .9, basal), T2); vec2 csv = vec2(cs, cs * el), cb = floor(lp / csv);   // 三层大小：大的、中的、碎的；格子顺着晶体的方向排，所以会排成行
         for (int yy = -1; yy <= 1; yy++) for (int xx = -1; xx <= 1; xx++) {
           vec2 cc = cb + vec2(float(xx), float(yy)), hb = cc + vec2(float(L3) * 13.7 + float(k) * 5.1, float(i) * 2.3), ctr = (cc + .5 + (vec2(hash(hb + 1.3), hash(hb + 5.9)) - .5) * .7) * csv;
-          float zone = smoothstep(.36, .6, vn(ctr / 115. + vec2(float(k) * 3.3, float(i) * 1.9)));            // 蚀得厉害的一片和干净的一片
-          if (hash(hb) > mix(.03, L3 == 0 ? .6 : (L3 == 1 ? .85 : .75), zone)) continue;
+          float zone = smoothstep(mix(.36, .38, T2), mix(.6, .66, T2), vn(ctr / mix(115., 150., T2) + vec2(float(k) * 3.3, float(i) * 1.9)));            // 蚀得厉害的一片和干净的一片：有疏有密，中间留干净的面
+          if (hash(hb) > mix(.03, (L3 == 0 ? .6 : (L3 == 1 ? .85 : .75)) * mix(1., L3 == 2 ? .45 : 1.02, T2), zone)) continue;
           float r = cs * (uEtchT < .5 ? .5 + .5 * hash(hb + 3.7) : .45 + .45 * hash(hb + 3.7)); vec2 lq = lp - ctr, N1, N2, bw; float C0e, C12, dm;
-          if (uEtchT > 1.5) { vec2 sq = vec2(lq.x, lq.y / elS); dm = 1e9; bw = vec2(0., -1.);   // 六边形：六道坑壁，柱面上顺着 c 轴拉长成压扁的六边形
-            for (int e6 = 0; e6 < 6; e6++) { float an = float(e6) * 1.0472 + .5236; vec2 Nn = vec2(cos(an), sin(an)); float de = r * .5 - dot(sq, Nn); if (de < dm) { dm = de; bw = normalize(vec2(Nn.x, Nn.y / elS)); } } }
+          if (uEtchT > 1.5) { vec2 sq = vec2(lq.x, lq.y / elS); dm = 1e9; bw = vec2(0., -1.);   // 六边形：六道坑壁；底面上是正六边形，柱面上尖头朝着 c 轴、拉得很长，一排排往上叠（GIA 2024 的「压扁的六边形」）
+            for (int e6 = 0; e6 < 6; e6++) { float an = float(e6) * 1.0472 + .5236 * basal; vec2 Nn = vec2(cos(an), sin(an)); float de = r * .5 - dot(sq, Nn); if (de < dm) { dm = de; bw = normalize(vec2(Nn.x, Nn.y / elS)); } } }
           else { if (uEtchT < .5) { N1 = vec2(.866, .5); N2 = vec2(-.866, .5); C0e = r * .5; C12 = r * .5; }
             else { float w = r * .42, hh = r * 2.5; N1 = normalize(vec2(hh, w)); N2 = vec2(-N1.x, N1.y); C0e = hh / 3.; C12 = dot(N1, vec2(w, -hh / 3.)); }
             float d0 = C0e + lq.y, d1 = C12 - dot(lq, N1), d2 = C12 - dot(lq, N2); dm = min(d0, min(d1, d2)); bw = d0 <= min(d1, d2) ? vec2(0., -1.) : (d1 <= d2 ? N1 : N2); }
@@ -294,9 +294,9 @@ void main(){
         day *= 1. + lit4 * (.55 + .2 * (tc - .5)) * inA * kE2;                                                            // 坑壁：朝光的亮、背光的暗；一级级台阶带一点锯齿明暗
         float fl4 = (pow(max(0., dot(rw4, uL)), 34.) + max(window(rw4, WA), window(rw4, WB) * .7) * .7) * inA * (1. - flr * .6);
         day = mix(day, mix(vec3(1., .995, .99), hueS2, .3), clamp(fl4, 0., 1.) * .88 * kE2);                                // 转到那个角度，整片的同一面墙一起闪
-        float tl4 = (1. - smoothstep(0., .9, tc * stH)) * step(.8, best) * keepT * (1. - flr), rim = 1. - smoothstep(0., .8, abs(bestAll));
-        day = mix(day, lit4 > 0. ? vec3(1., .99, .98) : DEEP, tl4 * kE2 * (lit4 > 0. ? .5 : .22));                           // 一层层台阶的细线，大三角里套小三角
-        day = mix(day, lit4 > 0. ? vec3(1., .99, .98) : DEEP, rim * kE2 * (lit4 > 0. ? .5 : .28)); } } }
+        float soft = mix(1., .42, T2), tl4 = (1. - smoothstep(0., mix(.9, 1.8, T2), tc * stH)) * step(.8, best) * keepT * (1. - flr), rim = 1. - smoothstep(0., mix(.8, 2.2, T2), abs(bestAll));
+        day = mix(day, lit4 > 0. ? mix(vec3(1., .99, .98), hueS2, .35 * T2) : DEEP, tl4 * kE2 * (lit4 > 0. ? .5 : .22) * soft);                           // 一层层台阶的细线，大三角里套小三角（绿柱石的柔一些、带一点自己的颜色）
+        day = mix(day, lit4 > 0. ? mix(vec3(1., .99, .98), hueS2, .35 * T2) : DEEP, rim * kE2 * (lit4 > 0. ? .5 : .28) * soft); } } }
   // 结构线：颜色跟着受光走。背光是靛，中间是紫，受光的棱带着会变的青和玫瑰色
   float la = 0., dRe = 1e9, alR = 0.; vec3 lc = vec3(0.); vec3 deepL = uDeepL, midL = uMidL;
   float phase = dot(nv + toView(nN), vec3(.45, .35, .25)) + along * .25 + uTime * .02; vec3 iri = vec3(.58, .64, .74) + vec3(.26, .17, .14) * cos(6.2832 * (phase + vec3(0., .38, .7))); float run = pow(max(0., cos(6.2832 * (phase * 1.7 + .2))), 10.);   // run：沿着受光的棱流过去的一小段亮
@@ -316,6 +316,7 @@ void main(){
   day = mix(day, vec3(.9, .94, .96), .05 * rev * (1. - uSet));
   if (lit < -.1) { float gl = exp(-dS / 11.) * .34 * uSet * mix(.5, 1., smoothstep(1., 2., tone)) * smoothstep(-.1, -.4, lit); day = mix(day, GLOW, gl); uvc = mix(uvc, uUVc, gl * .8); }   // 光从背面穿出来的那一侧亮一圈
   { vec3 nbP = PN(k, nb); float eFr = max(frA, step(.0006, dot(nbP, nbP) - 1.)) * step(dF, min(dS, dC) + .01); la *= mix(1., .3 + .7 * smoothstep(.3, .62, vn(vec2(along * U / 2.6, float(i) + float(nb) * 1.7))), eFr); }   // 断开的棱崩得一截一截的
+  la *= 1. - .38 * step(1.5, uEtchT) * step(.001, uEtch);   // 溶蚀过的绿柱石，棱被溶得圆一些：线淡一点、不那么硬
   day = mix(day, lc, la); uvc = mix(uvc, mix(uUVc, iri + .25, .3), la * .36);
   { float er = smoothstep(-.35, .7, lit), brk2 = mix(smoothstep(.42, .68, vn(pix / 5.5 + 8.3)), 1., er);   // 内圈：自己的浅色（暖光或冷光，跟藏色走），受光一侧亮而连贯，背光一侧淡、断开
     vec3 rimc = mix(mix(uHid[3] / max(.05, max(uHid[3].r, max(uHid[3].g, uHid[3].b))), vec3(1.), .5), iri + .1, .35);
