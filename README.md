@@ -9,7 +9,7 @@
 
 Each crystal is built from real crystal faces, and every pixel follows light through the stone: refraction, colour that deepens with thickness, growth zones, pleochroism, dispersion, fluorescence under UV, and the coloured light it casts on the paper. There is no generative content: the crystals' looks and motion are all computed in code.
 
-It comes with 26 minerals and 227 colours, each checked against its sources. It grew out of *Ore Projection*, the aesthetic system Helen AphroIcy made for her original character Fufu, the mineral game [ISARO](https://isaro.aphrogenes.com) and the Crystal Atlas.
+It comes with 26 minerals and 228 colours, each checked against its sources. It grew out of *Ore Projection*, the aesthetic system Helen AphroIcy made for her original character Fufu, the mineral game [ISARO](https://isaro.aphrogenes.com) and the Crystal Atlas.
 
 ## Try it
 

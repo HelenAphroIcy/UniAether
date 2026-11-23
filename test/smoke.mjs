@@ -8,7 +8,7 @@ const assert = (c, m) => { if (!c) { console.error('✗', m); process.exit(1); }
 const UA = require(join(root, 'dist/uniaether.cjs'));
 const M = UA.minerals();
 assert(M.length === 26, '26 minerals');
-assert(M.reduce((n, m) => n + m.colours.length, 0) === 227, '227 colours');
+assert(M.reduce((n, m) => n + m.colours.length, 0) === 228, '228 colours');
 assert(M.every(m => UA.sources(m.id).length > 0), 'every mineral has sources');
 assert(UA.shapes.prism(6).length <= 18 && UA.shapes.bipyramid(9).length <= 18, 'shapes fit in 18 faces');
 assert(UA.crystal({ shape: 'prism', colour: '#5fe6ff' }).cluster.length === 1, 'a custom crystal builds');

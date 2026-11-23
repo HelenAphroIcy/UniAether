@@ -46,7 +46,8 @@ function pick(o) {   // 写错了名字不让页面空着：提醒一句，用�
   if (!col) { console.warn(`[UniAether] "${o.mineral}" has no colour "${c}", showing "${cs[0].id}". Colours: ${cs.map(x => x.id).join(', ')}`); col = cs[0]; }
   return { min, col };
 }
-function oreFor(o) {
+function oreFor(o) { const r_ = oreFor0(o); if (o.scale && r_.ore.cluster) r_.ore.cluster = r_.ore.cluster.map(c => ({ ...c, s: c.s * o.scale, t: [c.t[0] * o.scale, (c.t[1] - 2.02) * o.scale + 2.02, c.t[2] * o.scale] })); return r_; }   // scale：在同样的画框里把晶体缩小一点，多留白
+function oreFor0(o) {
   if (o.crystal) return { ore: crystal(o.crystal), uv: !!o.crystal.fluorescence, lamp: false };
   const { min, col } = pick(o), lamp = o.light === 'lamp' && !!col.inc, ore = colorize(min, lamp ? lampOf(col) : col, o.form || 0);
   if (o.sphere) { ore.cluster = [{ R: tilt(.3, .25, .1), t: add(C0, [0, -.05, 0]), s: typeof o.sphere === 'number' ? o.sphere : 1.25, form: SPHERE }]; ore.inner = 0; }   // 磨圆的矿石球：同一种矿物、同一种颜色和色带，形状换成球
