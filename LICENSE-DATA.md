@@ -3,7 +3,7 @@
 **What this covers:** everything in `src/data/` and the same data inside the built files in `dist/`:
 
 - the 26 mineral looks: habits, clusters, optics settings
-- the 227 colours of the colour cards, their layering, rarity tiers and fluorescence
+- the 229 colours of the colour cards, their layering, rarity tiers and fluorescence
 - the notes on cause and locality
 - the list of sources
 - the fluorite of Ore Projection version 8
