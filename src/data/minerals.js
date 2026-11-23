@@ -133,7 +133,7 @@ const MINERALS = {
       { id: 'rainbow', zh: '彩虹', en: 'Rainbow', hex: '#86c47a', hex2: '#f08cb0', depth: 1.45, sw: ['#e8d470', '#5c94d6'], bands: ['#5c94d6', '#56b4c0', '#84c47a', '#e8d470', '#f4ac80', '#f088b0', '#b896e0'], rarity: 'mythic', cause: { zh: '一根晶体上一段一段换颜色，像彩虹', en: 'Colour after colour along one crystal, like a rainbow' } },
       { id: 'canary', zh: '金丝雀黄', en: 'Canary', hex: '#f2da58', depth: .4, habit: 'stub', rarity: 'rare', cause: { zh: '明亮的黄，碧玺里少见', en: 'A bright yellow, uncommon in tourmaline' } },
       { id: 'chrome', zh: '铬绿', en: 'Chrome green', hex: '#2f9a52', vivid: 0.5, habit: 'stub', rarity: 'rare', where: { zh: '坦桑尼亚', en: 'Tanzania' }, cause: { zh: '叫铬碧玺，其实主要是钒上的色，和许多巴西、非洲的祖母绿一样', en: 'Called chrome tourmaline, but coloured mostly by vanadium, like many Brazilian and African emeralds' } },
-      { id: 'paraiba', zh: '帕拉伊巴', en: 'Paraíba', hex: '#1fcfe4', vivid: 1, glow: '#7cf8ff', glowK: 1, rarity: 'mythic', where: { zh: '巴西帕拉伊巴州；后来尼日利亚、莫桑比克也找到了含铜的', en: 'Paraíba, Brazil; copper-bearing stones later found in Nigeria and Mozambique' }, cause: { zh: '霓虹一样的蓝绿来自铜，铜在别的碧玺里不上色', en: 'The neon blue-green comes from copper, which colours no other tourmaline' } },
+      { id: 'paraiba', zh: '帕拉伊巴', en: 'Paraíba', hex: '#00c0f0', vivid: 1, depth: .9, glow: '#48e4ff', glowK: 1.8, rarity: 'mythic', where: { zh: '巴西帕拉伊巴州；后来尼日利亚、莫桑比克也找到了含铜的', en: 'Paraíba, Brazil; copper-bearing stones later found in Nigeria and Mozambique' }, cause: { zh: '霓虹一样的蓝绿来自铜，铜在别的碧玺里不上色', en: 'The neon blue-green comes from copper, which colours no other tourmaline' } },
       { id: 'achroite', zh: '无色', en: 'Colourless', hex: '#f5f7fb', rarity: 'mythic', cause: { zh: '无色的碧玺很少见', en: 'Colourless tourmaline is rare' } },
     ],
   },
