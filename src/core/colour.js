@@ -45,6 +45,8 @@ function colorize(min, col, ci = 0) {
         loT: _tint(_rgb(_hue(h, coolOf(h), .3 * (1 - .7 * v)), Math.min(.8, s), .5), .18, .93), hiT: _tint(_rgb(_hue(h, .14, .32 * (1 - .7 * v)), s * .7, .62), .12),
         rimB: _tint(hidOf(h, s)[3], .22 * (1 - .5 * v), 1.18), hid: hidOf(h, s), hidA: .36 * (1 - .65 * v),   // 里面受光的背面：第二种颜色，红的偏橙金，蓝的偏青
         env: [_rgb(_hue(h, coolOf(h), .35 * (1 - .7 * v)), Math.max(.22, Math.min(.42 + .38 * v, s * (.55 + .35 * v))), .46), _rgb(h, Math.max(.2, Math.min(.5 + .35 * v, s * (.5 + .35 * v))), .82), _rgb((h + .5) % 1, .42 * (1 - .5 * v), .88), _rgb(_hue(h, .14, .4 * (1 - .5 * v)), .5, .9)] };   // 环境色：深处偏冷的同色、自己的浅色、一道淡的补色、偏暖的高光
+  if (col.pure) Object.assign(acc, { hidA: .002, rimB: [1.2, 1.17, 1.18] });
+  if (col.hidC) Object.assign(acc, { hid: col.hidC.map(x => _lin(x)), hidA: col.hidA ?? .2 });   // 自己指定的藏色：背面和受光的里面换成这几种（比如玫瑰水晶的蜜桃、浅丁香粉），不用自动算出来的那几种   // 纯净的一种颜色（玫瑰水晶）：不要背面那层第二种颜色，也不要每一块刻面各带一点别的色，免得看着发灰发脏
   if (col.bands || (col.pl || 0) > .8) Object.assign(acc, { back: [.9, .89, .9], deepL: [.42, .41, .45], midL: [.64, .63, .67], deepC: [.54, .52, .58], hidA: .2, env: [[.6, .61, .66], [.92, .9, .92], [.96, .92, .88], [.88, .94, .95]] });   // 分段的：背面和暗处只留一点点冷，别把各段颜色蒙上一层灰紫
   const forms = min.clusters[col.habit || min.habit || 'main'] || min.clusters.main, cluster = forms[ci % forms.length]();
   const zAx = col.bands ? 1 : (col.axial ?? min.axial ?? 0), glow = col.glow ? { glowCol: _lin(col.glow).map(v => Math.min(1, v * 1.15)), glowK: col.glowK ?? .8 } : {};
