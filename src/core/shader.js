@@ -72,6 +72,7 @@ vec3 sigmaAx(float a){ if (uBand > .5) { vec3 c = uZ[0]; for (int i = 1; i < 7; 
 vec3 sigZ(int j, vec3 pp, float rho){ vec3 s0 = sigmaAt(j == gAK ? mix(rho, gRM, uChord) : rho); if (uZAx < .001) return s0; float a = clamp((pp.y / uF[j] - uAxR.x) / (uAxR.y - uAxR.x), 0., 1.); if (j == gAK) a = mix(a, gAF, .72); return mix(s0, sigmaAx(a), uZAx); }
 vec3 sigP(int j, vec3 s){ if (uPl < .001 || gAK < 0) return s; vec3 dl = j == gAK ? gDl : normalize(transpose(uR[j]) * gDw), w = dl * dl; w *= w; w /= max(1e-4, w.x + w.y + w.z); return mix(s, w.x * uPlA + w.y * uPlB + w.z * uPlC, uPl); }   // 多色性：顺着晶体三个方向看，吸掉的光不一样
 float lineA(float d, float w){ return clamp(w + .9 - d, 0., 1.); }
+
 vec3 lad4(float t, vec3 a, vec3 b, vec3 c, vec3 d){ return t < 1. ? mix(a, b, t) : (t < 2. ? mix(b, c, t - 1.) : mix(c, d, clamp(t - 2., 0., 1.))); }
 float lad4f(float t, float a, float b, float c, float d){ return t < 1. ? mix(a, b, t) : (t < 2. ? mix(b, c, t - 1.) : mix(c, d, clamp(t - 2., 0., 1.))); }
 float lightOn(vec3 n){ return max(0., dot(n, uL)) + .55 * max(0., dot(n, uLF)); }
@@ -161,7 +162,7 @@ void main(){
         if (rho <= uG[j]) { if (!grown) sg2 = sector(j, gi, sigP(j, sigZ(j, pp, rho))); grown = true; din2 = max(din2, (uG[j] - rho) * uF[j]); } else dout2 = min(dout2, (rho - uG[j]) * uF[j]); } }
     if (grown) { tau += sg2 * dt; len += dt; flu += dot(sg2, vec3(.3333)) * dt; } float sd = grown ? din2 : dout2; fg += exp(-sd * sd / .0018) * dt; }
   for (int j = 0; j < K; j++) { if (OK[j]) tau += lines(j, OL[j], DL[j]); }
-  day *= exp(-tau / (1. + tau * CAP)); { vec3 hu1 = day / max(.001, max(day.r, max(day.g, day.b))); float lr = len / max(s, 1e-3), core = smoothstep(.2, .7, lr) * (1. - smoothstep(1., 2.4, lr)); day = mix(day, min(vec3(1.), day * 1.2 + hu1 * .05), core * .42 * uSet); }   // 透光：光穿过的地方亮起来，带着石头自己的颜色 if (uGlowK > .001) { float gk = (1. - exp(-len * 1.3)) * uGlowK * (.93 + .07 * sin(uTime * 1.1)); day = mix(day, day * .55 + uGlowCol * .62, gk * .55 * uSet); day += uGlowCol * gk * gk * .16 * uSet; }                                                       // 路很长的地方（贴着外圈看过去）不让它一直深下去
+  day *= exp(-tau / (1. + tau * CAP)); { vec3 hu1 = day / max(.001, max(day.r, max(day.g, day.b))); float lr = len / max(s, 1e-3), core = smoothstep(.2, .7, lr) * (1. - smoothstep(1., 2.4, lr)); day = mix(day, min(vec3(1.), day * 1.2 + hu1 * .05), core * mix(.42, .64, step(1.5, uEtchT) * step(.001, uEtch)) * uSet); }   // 透光：光穿过的地方亮起来，带着石头自己的颜色 if (uGlowK > .001) { float gk = (1. - exp(-len * 1.3)) * uGlowK * (.93 + .07 * sin(uTime * 1.1)); day = mix(day, day * .55 + uGlowCol * .62, gk * .55 * uSet); day += uGlowCol * gk * gk * .16 * uSet; }                                                       // 路很长的地方（贴着外圈看过去）不让它一直深下去
   { float fx_ = len * .3 + flu * 2.4, e1 = 1. - exp(-1.1 * fx_), e2 = 1. - exp(-.28 * fx_); vec3 gc = mix(uUVa, uUVb, e1); gc = mix(gc, uUVc, e2 * e2 * .8); uvc = uvc * .5 + gc * (.22 + .85 * e1); }
   { float gl = min(.6, fg * 1.3) * (1. - uSet); day = mix(day, vec3(.9, 1., .96), gl); uvc += vec3(.3, .5, .9) * gl; }                // 正在长的那一层微微发亮
   int m1 = AF[k], m2 = AF[k]; float tirK = 0., inE = 1e9, inE2 = 1e9, inL = 0.;
@@ -177,15 +178,16 @@ void main(){
     vec3 e2 = envR(ow); float sp = pow(max(0., dot(ow, uL)), 6.), lum = dot(day, vec3(.3, .55, .15)), body = max(.04, max(day.r, max(day.g, day.b)));
     vec3 refl = (e2 * (.78 + .5 * sp) + sp * .35) * (day / body) * mix(1., lum / body + .25, .5);             // 反射回来的那几块：带着这块石头的颜色，映着周围的光
     day = mix(day, refl, tirK * uIn * .7 * (1. - .6 * uGlowK) * uSet);
-    float hq = fhash(PN(k, m1) + 1.7 * PN(k, m2), float(k) + 2.), st4 = floor(hq * 4.) / 3.; day *= mix(1., .82 + .36 * st4, uIn * .7 * (1. - .5 * uGlowK) * uSet);   // 每一小块一档明暗，像一格一格的
-    float li = (1. - smoothstep(.35, 1.3, inE)) * .5, li2 = (1. - smoothstep(.35, 1.2, inE2)) * .3 * tirK;
+    float hq = fhash(PN(k, m1) + 1.7 * PN(k, m2), float(k) + 2.), st4 = floor(hq * 4.) / 3.; day *= mix(1., mix(.82 + .36 * st4, .5 + .92 * st4, step(1.5, uEtchT) * step(.001, uEtch)), uIn * .7 * (1. - .5 * uGlowK) * uSet);   // 每一小块一档明暗，像一格一格的
+    day *= mix(1., .62 + .52 * smoothstep(2., 48., inE) + .1 * smoothstep(0., 3. * s, t1), step(1.5, uEtchT) * step(.001, uEtch) * uIn * uSet);   // 溶蚀海蓝宝：透过去的每一块背面像宝石的一个刻面——中间亮、靠棱的地方暗一圈，越深的那块越亮一点
+    float li = (1. - smoothstep(.35, 1.3, inE)) * mix(.5, .72, step(1.5, uEtchT) * step(.001, uEtch)), li2 = (1. - smoothstep(.35, 1.2, inE2)) * .3 * tirK;
     vec3 lcol = mix(mix(uMidL, uDeepL, .4), vec3(1., .985, .97), .35 + .5 * tirK);
     day = mix(day, lcol, max(li, li2) * uIn * uSet);
     if (uPh > .001) { float FF = uF[k]; for (int c = 0; c < 5; c++) { float r = c == 0 ? .55 : (c == 1 ? .8 : .84 + float(c) * .035), w = (c < 2 ? .012 : .006) * FF; if (uG[k] < r + .03) continue; float sh = shell(k, p, Dr, r * FF, w) / w;   // 幻影：长到一半停过一阵，留下一层和外形一样的薄膜，斜着穿过的地方最清楚
         float a = (clamp((sh - 2.) * .12, 0., 1.) * .8 + .06 * step(.5, sh)) * uPh * (c == 0 ? 1. : (c == 1 ? .55 : .3)) * (c < 2 ? 1. : 1. - step(.5, sh) * .7); vec3 pc = mix(vec3(1., .99, .97), uHid[1 + c % 2], .35);   // 后三条是靠近表面的细生长线
         day = mix(day, pc, a * uSet); } } }
   { int m = (uIn > .001 && uK[k] < .5) ? m1 : AF[k]; vec3 nb2 = uR[k] * NRM(k, m, OL[k] + TF[k] * Dl); float bl = lightOn(nb2), pq = .5 * smoothstep(.1, .2, bl) + .5 * smoothstep(.45, .55, bl);   // 隔着正面看到的背面：朝着光的那块亮，背着光的那块暗一档、偏冷
-    float hb = fhash(PN(k, m), 3.); vec3 hcb = uHid[int(min(3., floor(fract(hb * 3.7) * 4.)))]; vec3 tb = mix(.93 + .11 * cos(6.2832 * (hb + vec3(0., .33, .67))), mix(vec3(1.), hcb / max(.05, dot(hcb, vec3(.3, .55, .15))), 1.6 * uHidA), step(.001, uHidA)); day *= mix(vec3(1.), mix(mix(uBack, vec3(.88, .85, .86), uFrost), uRimB, pq) * tb * mix(.86, 1.12, fract(hb * 5.3)), uSet); uvc *= mix(1., mix(.72, 1.14, pq), uSet); vec3 qw = uT[k] + uR[k] * (OL[k] + TF[k] * Dl) - vec3(0., 2.02, 0.), rb = normalize(d - 2. * dot(d, nb2) * nb2 + qw * .34); day = mix(day, vec3(1., 1., .98), max(window(rb, WA), window(rb, WB) * .7) * .46 * uClear * uSet * (1. - .75 * uK[k])); }
+    float hb = fhash(PN(k, m), 3.); vec3 hcb = uHid[int(min(3., floor(fract(hb * 3.7) * 4.)))]; vec3 tb = mix(.93 + .11 * cos(6.2832 * (hb + vec3(0., .33, .67))), mix(vec3(1.), hcb / max(.05, dot(hcb, vec3(.3, .55, .15))), 1.6 * uHidA), step(.001, uHidA)); day *= mix(vec3(1.), mix(mix(uBack, vec3(.88, .85, .86), uFrost), uRimB, pq) * tb * mix(.86, 1.12, fract(hb * 5.3)), uSet); uvc *= mix(1., mix(.72, 1.14, pq), uSet); vec3 qw = uT[k] + uR[k] * (OL[k] + TF[k] * Dl) - vec3(0., 2.02, 0.), rb = normalize(d - 2. * dot(d, nb2) * nb2 + qw * .34); day = mix(day, vec3(1., 1., .98), max(window(rb, WA), window(rb, WB) * .7) * mix(.46, .72, step(1.5, uEtchT) * step(.001, uEtch)) * uClear * uSet * (1. - .75 * uK[k])); }
   for (int j = 0; j < 2; j++) { if (!OK[j]) continue;                                           // 八面体解理：晶体里面斜着的一片，上面一层会换颜色的虹彩
     for (int c = 0; c < 2; c++) { if (j == 1 && c == 1) continue;
       vec3 n = (j == 0 ? (c == 0 ? vec3(1., 1., 1.) : vec3(-1., 1., -1.)) : vec3(1., -1., 1.)) * .57735; float off = (c == 0 ? 1.3 : 1.12) * uF[j] * uCOff;
@@ -230,7 +232,8 @@ void main(){
     uvc = mix(uvc, lad4(tone, vec3(.808, .886, 1.), vec3(.588, .698, .973), vec3(.384, .463, .847), vec3(.235, .259, .62)) * (1. + amp * gr), lad4f(tone, .05, .1, .16, .22) * uSet * (1. - .8 * uClear)); uvc = mix(uvc, DEEP, pool * .06 * uSet); }
   { vec3 r = d - 2. * dot(d, nw) * nw; float cv = max(0., -dot(d, nw)), F = min(1., (.05 * uLus + .5 * pow(1. - cv, 2.4)) * mix(1., uLus, .45)) * uSet; vec3 e = envR(r); float wgl = 1.; { float fam = max(step(max(abs(nl.x), max(abs(nl.y), abs(nl.z))), .9), smoothstep(.7, .95, uFrost) * .8), fr = fam * uFrost * uSet, sug = vn(fq / 2.3), g2 = sand(fq, 1.1); vec3 hue = day / max(.001, max(day.r, max(day.g, day.b))), veil = mix(vec3(1.), hue, .4) * (.86 + .2 * min(1., b)) * (1. + .1 * g2); day = mix(day, veil, fr * (.2 + .3 * sug)); F *= 1. - .7 * fr; wgl = 1. - .8 * fr; }
     day = mix(day, vec3(.72) + .28 * cos(6.2832 * (cv * 1.6 + float(k) * .13 + vec3(0., .33, .67))), .07 * uSet);                              // 珠光的薄膜色：看的角度变，粉、青、紫跟着换                    // 这个面映着哪一块环境：越斜着看映得越多；转到正对主光的角度，整面亮一下
-    day = mix(day, e, F); { vec3 pw3 = uT[k] + uR[k] * p - vec3(0., 2.02, 0.), rw = normalize(r + pw3 * .2); float win = max(window(rw, WA), window(rw, WB) * .75); day = mix(day, vec3(1.), max(smoothstep(.9, .97, dot(rw, uL)) * .7, win * .9 * (1. - .6 * uK[k])) * wgl * uSet); } uvc = mix(uvc, uUVb * (.5 + .5 * e.b), F * .16); }
+    float chm = step(1.5, uEtchT) * step(.001, uEtch) * step(.7, abs(nl.y)) * (1. - step(.97, abs(nl.y)));   // 溶蚀海蓝宝顶上那一圈斜面：不要一整条白，少映一点窗，透出里面的湖水绿，只留一线亮
+    day = mix(day, e, F * (1. - .5 * chm) * (1. - .32 * step(1.5, uEtchT) * step(.001, uEtch))); { vec3 pw3 = uT[k] + uR[k] * p - vec3(0., 2.02, 0.), rw = normalize(r + pw3 * .2); float win = max(window(rw, WA), window(rw, WB) * .75); day = mix(day, mix(vec3(1.), vec3(.93, 1., .99), chm), max(smoothstep(.9, .97, dot(rw, uL)) * .7, win * .9 * (1. - .6 * uK[k]) * (1. - .68 * chm)) * wgl * uSet); } uvc = mix(uvc, uUVb * (.5 + .5 * e.b), F * .16); }
   { vec2 uvf = vec2(dot(p, t1), dot(p, t2)) / s; float isC = step(.9, max(abs(nl.x), max(abs(nl.y), abs(nl.z)))), hA = fhash(nl, float(k) + 5.), hB = fract(hA * 9.7 + .2); vec2 q1 = uvf - (vec2(hA, hB) - .5) * .7, q2 = uvf - (vec2(fract(hA * 3.3), fract(hB * 5.1)) - .5) * 1.1;
     float dc = min(max(abs(q1.x) * 1.25, abs(q1.y)), max(abs(q2.x), abs(q2.y) * 1.4) + .11), dt3 = min(max(q1.y, max(-.5 * q1.y + .866 * q1.x, -.5 * q1.y - .866 * q1.x)), max(-q2.y, max(.5 * q2.y + .866 * q2.x, .5 * q2.y - .866 * q2.x)) + .09);
     float st = mix(dt3, dc, isC) * uStep + (vn(fq / 40.) - .5) * .35, fs = fract(st), tl = (1. - smoothstep(0., .07, fs)) * uTerr * uSet * (1. - uK[k]) * smoothstep(1.5, 5., dE) * (.45 + .55 * vn(fq / 17. + 5.));
@@ -271,13 +274,13 @@ void main(){
     if (okF > .5 && dE > 2.) {
       vec3 v3 = uEtchT < .5 ? vec3(-sign(nl.x), 0., 0.) : (uEtchT > 1.5 && basal > .5 ? vec3(1., 0., 0.) : vec3(0., 1., 0.)); v3 -= n0 * dot(v3, n0);   // 尖朝哪儿：钻石朝着面的一条棱（和八面体面本身的三角反着），锂辉石、绿柱石顺着 c 轴
       vec2 up2 = normalize(vec2(dot(v3, t1), dot(v3, t2)) + 1e-5), rt2 = vec2(up2.y, -up2.x), rq0 = vec2(dot(p, t1), dot(p, t2)) * U, lp = vec2(dot(rq0, rt2), dot(rq0, up2));
-      float T2 = step(1.5, uEtchT), el = uEtchT < .5 ? 1. : (uEtchT < 1.5 ? 2.6 : mix(2.8, 1., basal)), elS = T2 > .5 ? mix(3.2, 1., basal) : 1., kE2 = uEtch * uSet * smoothstep(2., 6., dE), bF = lightOn(nw), best = 0., bestAll = -1e3, stH = 2., flr = 0.; vec2 bN = vec2(0.); vec3 hueS2 = day / max(.001, max(day.r, max(day.g, day.b)));
+      float chE = step(1.5, uEtchT) * basal * (1. - step(.97, abs(n0.y))), T2 = step(1.5, uEtchT), el = uEtchT < .5 ? 1. : (uEtchT < 1.5 ? 2.6 : mix(2.8, 1., basal)), elS = T2 > .5 ? mix(3.2, 1., basal) : 1., kE2 = uEtch * uSet * smoothstep(2., 6., dE), bF = lightOn(nw), best = 0., bestAll = -1e3, stH = 2., flr = 0.; vec2 bN = vec2(0.); vec3 hueS2 = day / max(.001, max(day.r, max(day.g, day.b)));
       for (int L3 = 0; L3 < 3; L3++) {
-        float cs = (L3 == 0 ? 44. : (L3 == 1 ? 18. : 7.5)) * mix(1., mix(.62, .9, basal), T2); vec2 csv = vec2(cs, cs * el), cb = floor(lp / csv);   // 三层大小：大的、中的、碎的；格子顺着晶体的方向排，所以会排成行
+        float cs = (L3 == 0 ? 44. : (L3 == 1 ? 18. : 7.5)) * mix(1., mix(.62, .9, basal), T2) * mix(1., .6, chE); vec2 csv = vec2(cs, cs * el), cb = floor(lp / csv);   // 三层大小：大的、中的、碎的；格子顺着晶体的方向排，所以会排成行
         for (int yy = -1; yy <= 1; yy++) for (int xx = -1; xx <= 1; xx++) {
           vec2 cc = cb + vec2(float(xx), float(yy)), hb = cc + vec2(float(L3) * 13.7 + float(k) * 5.1, float(i) * 2.3), ctr = (cc + .5 + (vec2(hash(hb + 1.3), hash(hb + 5.9)) - .5) * .7) * csv;
           float zone = smoothstep(mix(.36, .38, T2), mix(.6, .66, T2), vn(ctr / mix(115., 150., T2) + vec2(float(k) * 3.3, float(i) * 1.9)));            // 蚀得厉害的一片和干净的一片：有疏有密，中间留干净的面
-          if (hash(hb) > mix(.03, (L3 == 0 ? .6 : (L3 == 1 ? .85 : .75)) * mix(1., L3 == 2 ? .45 : 1.02, T2), zone)) continue;
+          if (hash(hb) > mix(.03, (L3 == 0 ? .6 : (L3 == 1 ? .85 : .75)) * mix(1., L3 == 2 ? .45 : 1.02, T2), max(zone, .75 * chE)) * mix(1., 1.25, chE)) continue;   // 斜面上蚀得满一些
           float r = cs * (uEtchT < .5 ? .5 + .5 * hash(hb + 3.7) : .45 + .45 * hash(hb + 3.7)); vec2 lq = lp - ctr, N1, N2, bw; float C0e, C12, dm;
           if (uEtchT > 1.5) { vec2 sq = vec2(lq.x, lq.y / elS); dm = 1e9; bw = vec2(0., -1.);   // 六边形：六道坑壁；底面上是正六边形，柱面上尖头朝着 c 轴、拉得很长，一排排往上叠（GIA 2024 的「压扁的六边形」）
             for (int e6 = 0; e6 < 6; e6++) { float an = float(e6) * 1.0472 + .5236 * basal; vec2 Nn = vec2(cos(an), sin(an)); float de = r * .5 - dot(sq, Nn); if (de < dm) { dm = de; bw = normalize(vec2(Nn.x, Nn.y / elS)); } } }
@@ -321,7 +324,10 @@ void main(){
   { float er = smoothstep(-.35, .7, lit), brk2 = mix(smoothstep(.42, .68, vn(pix / 5.5 + 8.3)), 1., er);   // 内圈：自己的浅色（暖光或冷光，跟藏色走），受光一侧亮而连贯，背光一侧淡、断开
     vec3 rimc = mix(mix(uHid[3] / max(.05, max(uHid[3].r, max(uHid[3].g, uHid[3].b))), vec3(1.), .5), iri + .1, .35);
     float r1 = lineA(abs(dS - 2.5), mix(.36, .6, er)) * mix(.25, .9, er) * brk2 * uSet; day = mix(day, rimc, r1); uvc = mix(uvc, vec3(1.), r1 * .25); }
-  { float sh = max(lineA(abs(dF - 2.6), .5), lineA(abs(dC - 2.6), .5) * .7) * (.6 + .4 * wob) * (1. - smoothstep(.4, 1., tone)) * uSet; day = mix(day, vec3(1.), sh * .92); uvc = mix(uvc, vec3(1.), sh * .35); }
+  float eB = step(1.5, uEtchT) * step(.001, uEtch);
+  { float sh = max(lineA(abs(dF - 2.6), .5), lineA(abs(dC - 2.6), .5) * .7) * (.6 + .4 * wob) * (1. - smoothstep(.4, 1., tone)) * uSet; day = mix(day, mix(vec3(1.), vec3(.76) + .24 * cos(6.2832 * (along * 2.3 + dot(nv, vec3(1.1, .7, .4)) + vec3(0., .33, .67))), eB), sh * mix(.92, .42, eB)); uvc = mix(uvc, vec3(1.), sh * .35); }
+  if (eB > .5) { vec3 hu5 = day / max(.001, max(day.r, max(day.g, day.b))); float bev = (1. - smoothstep(1.2, 9., dF)) * (1. - smoothstep(1.2, 9., dF) * .4), core = 1. - smoothstep(.2, 1.3, dF);   // 棱像磨圆的玻璃：里侧一条带，光在这里拐弯，颜色浓一点；最边上一线亮
+    day = mix(day, day * mix(vec3(1.), hu5, .5) * .86, bev * .32 * uSet * (1. - frA)); day = mix(day, mix(vec3(1., .995, .99), hu5, .25), core * .45 * smoothstep(.15, .6, b) * uSet); }
   if (frA > .5 && uSet > .01) {   // 碎亮点：断面上满是很小的碎面，各朝各的方向；哪一片正好把灯（或窗）反进眼睛，哪一片就亮，转一下就换一批。崩口边上、弧的棱上、台阶上最多
     vec3 n0 = nl / sqrt(1. + frN), pxq = AX[k] - Dl * (dot(n0, AX[k]) / dot(n0, Dl)), pyq = AY[k] - Dl * (dot(n0, AY[k]) / dot(n0, Dl));
     mat2 Ji = inverse(mat2(vec2(dot(pxq, t1), dot(pxq, t2)) * U, vec2(dot(pyq, t1), dot(pyq, t2)) * U));   // 面上的距离换回屏幕上的像素：亮点在屏幕上是圆的，不跟着面压扁
@@ -360,6 +366,11 @@ void main(){
     gC = min(gC, vec3(.85)) * uSet; day = 1. - (1. - day) * (1. - gC); day = mix(day, gcc, ga * uSet);
     uvc = 1. - (1. - uvc) * (1. - gC * .6); uvc = mix(uvc, mix(vec3(.9, .95, 1.), gcc, .35), ga * .85 * uSet); }   // 亮边
   { vec2 cell = floor(fq / 11.); float h = hash(cell + 3.3); if (h > .988 && dE > 4.) { vec2 ctr = (cell + .5 + (vec2(hash(cell + 1.7), hash(cell + 5.1)) - .5) * .6) * 11.; float dd = length(fq - ctr), tw = pow(max(0., sin(h * 97. + uTime * .9 + dot(nv, vec3(9., 6., 4.)))), 14.) * exp(-dd * dd / 6.) * (tone > .8 ? 1. : .5) * uSet; day += (1. - day) * tw; uvc += (vec3(.84, .91, 1.) - uvc) * tw; } }   // 颗粒上的闪
+  if (uUV > .001) {   // 紫外灯下也看得出是一块晶体：白天那一层的明暗（刻面、台阶、棱上的光）按比例留在荧光上；里面再浮着一些会闪的小碎亮
+    float dl = dot(day, vec3(.3, .55, .15)); uvc *= clamp(1. + (dl - .74) * 1.5, .62, 1.38); uvc += (vec3(.88, .9, 1.) - uvc) * clamp((dl - .9) * 2.2, 0., .45);
+    float sg = 0.; vec3 sc3 = vec3(0.); for (int c = 0; c < 3; c++) { vec3 q = (OL[k] + (tn + th * (.14 + .3 * float(c))) * Dl) / uF[k] * 9. + float(c) * 5.7, fr = fract(q) - .5, ci = floor(q); float h = fract(sin(dot(ci, vec3(12.99, 78.23, 37.71))) * 43758.55);
+      if (h > .89) { vec3 o3 = (vec3(fract(h * 17.3), fract(h * 31.7), fract(h * 7.1)) - .5) * .5; float r = length(fr - o3), tw = .35 + .65 * pow(.5 + .5 * sin(uTime * 2.3 + h * 70.), 3.), g = (smoothstep(.24, .03, r) + smoothstep(.5, .12, r) * .22) * tw * (1. - .2 * float(c)); if (g > sg) { sg = g; sc3 = mix(vec3(.9, .93, 1.), vec3(.78, .82, 1.), fract(h * 13.1)); } } }
+    uvc += (sc3 - uvc) * sg * .9 * uSet; }
   float covA = 1.; if (dS < .5) { vec3 gd, gu; ground(pix, gd, gu); gu += uUVh * .62; float cov = clamp(dS + .5, 0., 1.); covA = cov; if (uAlpha < .5) { day = mix(gd, day, cov); uvc = mix(gu, uvc, cov); } }
   outC = finish(mix(day, uvc, uUV), pix, covA);
 }`;
