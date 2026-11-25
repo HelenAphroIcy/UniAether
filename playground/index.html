@@ -118,6 +118,7 @@
   /* 选项：按内容宽，靠左；选中的是一颗磨亮的珍珠 */
   .row { display: grid; grid-template-columns: 92px 1fr; align-items: center; gap: 12px; margin-top: 12px; }
   .row:first-of-type { margin-top: 0; }
+  .row[hidden] { display: none; }
   .row label { font: italic 400 16px/1.2 var(--serif); color: var(--ink-3); }
   html[lang="zh-CN"] .row label { font: 400 13px/1.2 var(--zh); }
   .seg { display: flex; flex-wrap: wrap; gap: 4px; }
@@ -370,6 +371,7 @@
     seg('formSeg', [[false, 'Crystal', '晶体'], [true, 'Polished sphere', '磨成球']], st.sphere, v => { st.sphere = v; update(true); count('form', { sphere: v }); });
     seg('grade', ['D', 'C', 'B', 'A', 'S'].map(g => [g, g, g]), st.grade, g => { st.grade = g; update(); });
     seg('light', [['day', 'Daylight', '日光', 'day'], ['uv', 'UV lamp', '紫外灯', 'uv'], ['lamp', 'Lamplight', '白炽灯', 'lamp']], st.light, l => { st.light = l; update(l === 'lamp' || st.light === 'lamp'); count('light', { l }); }, v => (v === 'uv' && !sup.uv) || (v === 'lamp' && !sup.lamp && !st.custom));
+    $('#light').parentElement.hidden = !sup.uv && !sup.lamp && !st.custom;   // only daylight to offer: no light row at all
     $('#proj').setAttribute('aria-checked', String(st.projection)); $('#proj').setAttribute('aria-label', ZH() ? '投影' : 'Projection');
     seg('frames', [[24, '24', '24'], [36, '36', '36'], [72, '72', '72']], exp.frames, f => { exp.frames = f; paint(); });
     seg('fsize', [[128, '128', '128'], [256, '256', '256'], [512, '512', '512']], exp.size, s => { exp.size = s; paint(); });
